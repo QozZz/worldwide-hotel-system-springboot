@@ -2,12 +2,14 @@ package com.qozz.worldwidehotelsystem.data.entity;
 
 import com.qozz.worldwidehotelsystem.data.enumeration.Role;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity(name = "usr")
 @Data
+@Accessors(chain = true)
 public class User {
 
     @Id
