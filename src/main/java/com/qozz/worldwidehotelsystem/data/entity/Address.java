@@ -3,7 +3,6 @@ package com.qozz.worldwidehotelsystem.data.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.math.BigInteger;
 
 @Entity
 @Data
