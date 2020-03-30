@@ -3,6 +3,7 @@ package com.qozz.worldwidehotelsystem.data.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Data
@@ -21,4 +22,7 @@ public class Room {
     @ManyToOne
     @JoinColumn(name = "hotel_id", nullable = false)
     private Hotel hotel;
+
+    @OneToMany(mappedBy = "room")
+    private Set<Schedule> schedules;
 }

@@ -26,4 +26,7 @@ public class User {
     @CollectionTable(name = "usr_role", joinColumns = @JoinColumn(name = "id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Schedule> schedules;
 }
