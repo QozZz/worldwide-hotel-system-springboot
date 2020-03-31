@@ -1,5 +1,6 @@
 package com.qozz.worldwidehotelsystem.controller;
 
+import com.qozz.worldwidehotelsystem.data.dto.HotelInfoDto;
 import com.qozz.worldwidehotelsystem.data.entity.Hotel;
 import com.qozz.worldwidehotelsystem.service.HotelService;
 import lombok.AllArgsConstructor;
@@ -15,9 +16,10 @@ public class HotelController {
 
     private final HotelService hotelService;
 
-    @GetMapping
-    public List<Hotel> getAllHotels() {
-        return hotelService.getAllHotels();
+    @GetMapping()
+    public List<HotelInfoDto> getAllHotelsInfo(@RequestParam(required = false, defaultValue = "") String country,
+                                               @RequestParam(required = false, defaultValue = "") String city) {
+        return hotelService.getAllHotelsInfo(country, city);
     }
 
     @GetMapping(value = "/{hotelId}")

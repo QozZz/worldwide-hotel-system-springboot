@@ -1,5 +1,6 @@
 package com.qozz.worldwidehotelsystem.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -21,5 +22,6 @@ public class Hotel {
     private Address address;
 
     @OneToMany(mappedBy = "hotel")
+    @JsonIgnore
     private Set<Room> rooms;
 }
