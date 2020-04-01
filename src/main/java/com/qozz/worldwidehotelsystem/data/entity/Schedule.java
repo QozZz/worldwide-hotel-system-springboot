@@ -1,12 +1,14 @@
 package com.qozz.worldwidehotelsystem.data.entity;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
 @Data
+@Accessors(chain = true)
 public class Schedule {
 
     @Id
@@ -14,11 +16,11 @@ public class Schedule {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "room_id")
+    @JoinColumn(nullable = false, name = "room_id")
     private Room room;
 
     @ManyToOne
-    @JoinColumn(name = "usr_id")
+    @JoinColumn(nullable = false, name = "usr_id")
     private User user;
 
     @Column(nullable = false)

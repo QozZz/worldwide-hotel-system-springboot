@@ -1,5 +1,6 @@
 package com.qozz.worldwidehotelsystem.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.qozz.worldwidehotelsystem.data.enumeration.Role;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -28,5 +29,6 @@ public class User {
     private Set<Role> roles;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private Set<Schedule> schedules;
 }

@@ -7,8 +7,12 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
+
+    Optional<Room> findRoomById(Long roomId);
+
     @Query(value = "select r.id, r.floor, r.number, r.hotel_id\n" +
             "    from schedule as s\n" +
             "    join room r on s.room_id = r.id\n" +
@@ -20,4 +24,13 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     List<Room> findAllFreeByHotelId(@Param("hotel_id") Long hotelId,
                                     @Param("register_start") LocalDate start,
                                     @Param("register_end") LocalDate end);
+
+    @Query(value = "select count(*)\n" +
+            "from schedule\n" +
+            "where register_start <= ?3 \n" +
+            "and register_end >= ?2 \n" +
+            "and room_id = ?1", nativeQuery = true)
+    int findNumberOfRentedRooms(@Param("room_id") Long roomId,
+                                @Param("register_start") LocalDate start,
+                                @Param("register_end") LocalDate end);
 }
