@@ -28,11 +28,11 @@ public class RoomService {
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
 
-    public Optional<Room> findRoomById(Long roomId) {
+    public Optional<Room> getRoom(Long roomId) {
         return roomRepository.findRoomById(roomId);
     }
 
-    public List<Room> findFreeRoomsByHotelId(Long hotelId, LocalDate start, LocalDate end) {
+    public List<Room> getFreeRoomsInHotel(Long hotelId, LocalDate start, LocalDate end) {
         return roomRepository.findAllFreeByHotelId(hotelId, start, end);
     }
 
@@ -42,7 +42,7 @@ public class RoomService {
         }
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserDoesNotExist(USER_DOES_NOT_EXIST));
-        Room room = findRoomById(roomId)
+        Room room = getRoom(roomId)
                 .orElseThrow(() -> new RoomDoesNotExist(ROOM_DOES_NOT_EXIST));
 
         Schedule schedule = new Schedule()

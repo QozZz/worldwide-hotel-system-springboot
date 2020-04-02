@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.qozz.worldwidehotelsystem.data.enumeration.Role;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -30,5 +32,6 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Schedule> schedules;
 }

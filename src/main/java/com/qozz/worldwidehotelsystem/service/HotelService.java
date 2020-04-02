@@ -7,10 +7,9 @@ import com.qozz.worldwidehotelsystem.data.repository.HotelRepository;
 import com.qozz.worldwidehotelsystem.exception.HotelDoesNotExist;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -21,36 +20,36 @@ public class HotelService {
     private final HotelRepository hotelRepository;
     private final HotelMapper hotelMapper;
 
-    public Hotel getHotel(Long hotelId) {
-        return hotelRepository.findById(hotelId)
+    public Hotel getHotelById(Long hotelId) {
+        return hotelRepository.findHotelById(hotelId)
                 .orElseThrow(() -> new HotelDoesNotExist(HOTEL_DOES_NOT_EXIST));
     }
 
-    public List<HotelInfoDto> getAllHotelsInfo(String country, String city) {
+    public List<HotelInfoDto> getHotelsInfo(String country, String city) {
         List<Hotel> hotels = hotelRepository.findAllHotelsByCountryAndCity(country, city);
-        return hotels.stream()
-                .map(hotelMapper::hotelToHotelAddressDto)
-                .collect(Collectors.toList());
+        return hotelMapper.hotelsToHotelInfoDtoList(hotels);
     }
 
     public Hotel createHotel(Hotel hotel) {
-        return hotelRepository.save(hotel);
+        return hotelRepository.saveAndFlush(hotel);
     }
 
     public Hotel changeHotel(Hotel newHotel, Long hotelId) {
-        return hotelRepository.findById(hotelId)
+        return hotelRepository.findHotelById(hotelId)
                 .map(hotel -> {
                     hotel.setName(newHotel.getName());
-                    hotel.setAddress(newHotel.getAddress());
-                    return hotelRepository.save(hotel);
+                    hotel.setStars(newHotel.getStars());
+                    hotel.setCountry(newHotel.getCountry());
+                    hotel.setCity(newHotel.getCity());
+                    hotel.setStreet(newHotel.getStreet());
+                    hotel.setNumber(newHotel.getNumber());
+                    return hotelRepository.saveAndFlush(hotel);
                 })
-                .orElseGet(() -> {
-                    newHotel.setId(hotelId);
-                    return hotelRepository.save(newHotel);
-                });
+                .orElseThrow(() -> new HotelDoesNotExist(HOTEL_DOES_NOT_EXIST));
     }
 
+    @Transactional
     public void deleteHotel(Long hotelId) {
-        hotelRepository.deleteById(hotelId);
+        hotelRepository.deleteHotelById(hotelId);
     }
 }

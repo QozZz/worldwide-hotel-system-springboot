@@ -1,0 +1,186 @@
+package com.qozz.worldwidehotelsystem.service;
+
+import com.google.common.collect.ImmutableList;
+import com.qozz.worldwidehotelsystem.data.dto.HotelInfoDto;
+import com.qozz.worldwidehotelsystem.data.entity.Hotel;
+import com.qozz.worldwidehotelsystem.data.mapping.HotelMapper;
+import com.qozz.worldwidehotelsystem.data.repository.HotelRepository;
+import com.qozz.worldwidehotelsystem.exception.HotelDoesNotExist;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
+@RunWith(MockitoJUnitRunner.class)
+public class HotelServiceTest {
+
+    private final static String HOTEL_DOES_NOT_EXIST = "Hotel does not exist!";
+    private List<Hotel> hotels;
+    private Hotel hotel;
+
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
+
+    @InjectMocks
+    private HotelService hotelService;
+
+    @Mock
+    private HotelRepository hotelRepository;
+
+    @Spy
+    private HotelMapper hotelMapper = Mappers.getMapper(HotelMapper.class);
+
+    @Before
+    public void setUp() {
+        hotels = initHotelInfoDtoList();
+        hotel = initHotel();
+    }
+
+    @Test
+    public void getHotelByIdWhenHotelExists() {
+        when(hotelRepository.findHotelById(1L)).thenReturn(Optional.of(hotel));
+
+        hotelService.getHotelById(1L);
+
+        verify(hotelRepository).findHotelById(1L);
+    }
+
+    @Test
+    public void getHotelByIdWhenHotelDoesNotExist() {
+        when(hotelRepository.findHotelById(1L)).thenReturn(Optional.empty());
+
+        expectedEx.expect(HotelDoesNotExist.class);
+        expectedEx.expectMessage(HOTEL_DOES_NOT_EXIST);
+
+        hotelService.getHotelById(1L);
+    }
+
+    @Test
+    public void getHotelsInfoWhenHotelsExist() {
+        when(hotelRepository.findAllHotelsByCountryAndCity(anyString(), anyString()))
+                .thenReturn(hotels);
+
+        List<HotelInfoDto> hotelInfoDtoList = hotelService.getHotelsInfo(anyString(), anyString());
+
+        verify(hotelRepository).findAllHotelsByCountryAndCity(anyString(), anyString());
+        verify(hotelMapper).hotelsToHotelInfoDtoList(hotels);
+
+        assertFalse(hotelInfoDtoList.isEmpty());
+        assertEquals(hotelMapper.hotelsToHotelInfoDtoList(hotels), hotelInfoDtoList);
+    }
+
+    @Test
+    public void getHotelsInfoWhenHotelsDoesNotExist() {
+        List<Hotel> emptyHotelList = Collections.emptyList();
+        when(hotelRepository.findAllHotelsByCountryAndCity(anyString(), anyString()))
+                .thenReturn(emptyHotelList);
+
+        List<HotelInfoDto> hotelInfoDtoList = hotelService.getHotelsInfo(anyString(), anyString());
+
+        verify(hotelRepository).findAllHotelsByCountryAndCity(anyString(), anyString());
+        verify(hotelMapper).hotelsToHotelInfoDtoList(emptyHotelList);
+
+        assertTrue(hotelInfoDtoList.isEmpty());
+        assertEquals(hotelMapper.hotelsToHotelInfoDtoList(emptyHotelList), hotelInfoDtoList);
+    }
+
+    @Test
+    public void createHotel() {
+        when(hotelRepository.saveAndFlush(any(Hotel.class))).thenReturn(hotel);
+
+        Hotel savedHotel = hotelService.createHotel(new Hotel());
+
+        verify(hotelRepository).saveAndFlush(any(Hotel.class));
+
+        assertNotNull(savedHotel);
+    }
+
+    @Test
+    public void changeHotelWhenHotelExists() {
+        when(hotelRepository.findHotelById(1L)).thenReturn(Optional.of(hotel));
+        when(hotelRepository.saveAndFlush(any(Hotel.class))).thenReturn(hotel);
+
+        Hotel changedHotel = hotelService.changeHotel(new Hotel(), 1L);
+
+        verify(hotelRepository).findHotelById(1L);
+        verify(hotelRepository).saveAndFlush(any(Hotel.class));
+
+        assertNotNull(changedHotel);
+    }
+
+    @Test
+    public void changeHotelWhenHotelDoesNotExist() {
+        when(hotelRepository.findHotelById(1L)).thenReturn(Optional.of(hotel));
+
+        expectedEx.expect(HotelDoesNotExist.class);
+        expectedEx.expectMessage(HOTEL_DOES_NOT_EXIST);
+
+        hotelService.changeHotel(new Hotel(), 1L);
+
+        verify(hotelRepository).saveAndFlush(any(Hotel.class));
+    }
+
+    @Test
+    public void deleteHotelWhenHotelExists() {
+        doNothing().when(hotelRepository).deleteHotelById(1L);
+        hotelService.deleteHotel(1L);
+
+        verify(hotelRepository).deleteHotelById(1L);
+        verifyNoMoreInteractions(hotelRepository);
+    }
+
+    @Test
+    public void deleteHotelWhenHotelDoesNotExist() {
+        doNothing().when(hotelRepository).deleteHotelById(1L);
+
+        hotelService.deleteHotel(1L);
+
+        verify(hotelRepository).deleteHotelById(1L);
+        verifyNoMoreInteractions(hotelRepository);
+    }
+
+    private List<Hotel> initHotelInfoDtoList() {
+        return ImmutableList.of(
+                new Hotel()
+                        .setId(1L)
+                        .setName("HotelOne")
+                        .setStars(5)
+                        .setCountry("CountryTwo")
+                        .setCity("CityTwo")
+                        .setStreet("StreetTwo")
+                        .setNumber("1"),
+                new Hotel()
+                        .setId(1L)
+                        .setName("HotelTwo")
+                        .setStars(5)
+                        .setCountry("CountryTwo")
+                        .setCity("CityTwo")
+                        .setStreet("StreetTwo")
+                        .setNumber("2"));
+    }
+
+    private Hotel initHotel() {
+        return new Hotel()
+                .setId(1L)
+                .setName("HotelOne")
+                .setStars(5)
+                .setCountry("CountryTwo")
+                .setCity("CityTwo")
+                .setStreet("StreetTwo")
+                .setNumber("1");
+    }
+}

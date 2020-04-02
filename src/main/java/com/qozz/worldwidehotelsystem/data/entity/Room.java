@@ -2,6 +2,8 @@ package com.qozz.worldwidehotelsystem.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -26,5 +28,6 @@ public class Room {
 
     @OneToMany(mappedBy = "room")
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Schedule> schedules;
 }
