@@ -6,15 +6,14 @@ import com.qozz.worldwidehotelsystem.data.entity.User;
 import com.qozz.worldwidehotelsystem.data.repository.RoomRepository;
 import com.qozz.worldwidehotelsystem.data.repository.ScheduleRepository;
 import com.qozz.worldwidehotelsystem.data.repository.UserRepository;
-import com.qozz.worldwidehotelsystem.exception.RoomAlreadyRented;
-import com.qozz.worldwidehotelsystem.exception.RoomDoesNotExist;
-import com.qozz.worldwidehotelsystem.exception.UserDoesNotExist;
+import com.qozz.worldwidehotelsystem.exception.RoomAlreadyRentedException;
+import com.qozz.worldwidehotelsystem.exception.RoomDoesNotExistException;
+import com.qozz.worldwidehotelsystem.exception.UserDoesNotExistException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -28,8 +27,9 @@ public class RoomService {
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
 
-    public Optional<Room> getRoom(Long roomId) {
-        return roomRepository.findRoomById(roomId);
+    public Room getRoomById(Long roomId) {
+        return roomRepository.findRoomById(roomId)
+                .orElseThrow(() -> new RoomDoesNotExistException(ROOM_DOES_NOT_EXIST));
     }
 
     public List<Room> getFreeRoomsInHotel(Long hotelId, LocalDate start, LocalDate end) {
@@ -38,18 +38,20 @@ public class RoomService {
 
     public Schedule rentRoom(Long roomId, LocalDate start, LocalDate end, String username) {
         if (roomRepository.findNumberOfRentedRooms(roomId, start, end) != 0) {
-            throw new RoomAlreadyRented(ROOM_IS_ALREADY_RENTED);
+            throw new RoomAlreadyRentedException(ROOM_IS_ALREADY_RENTED);
         }
+
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserDoesNotExist(USER_DOES_NOT_EXIST));
-        Room room = getRoom(roomId)
-                .orElseThrow(() -> new RoomDoesNotExist(ROOM_DOES_NOT_EXIST));
+                .orElseThrow(() -> new UserDoesNotExistException(USER_DOES_NOT_EXIST));
+        Room room =  roomRepository.findRoomById(roomId)
+                .orElseThrow(() -> new RoomDoesNotExistException(ROOM_DOES_NOT_EXIST));
 
         Schedule schedule = new Schedule()
                 .setRoom(room)
                 .setUser(user)
                 .setRegisterStart(start)
                 .setRegisterEnd(end);
-        return scheduleRepository.save(schedule);
+
+        return scheduleRepository.saveAndFlush(schedule);
     }
 }

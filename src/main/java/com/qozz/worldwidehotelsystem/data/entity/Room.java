@@ -2,6 +2,7 @@ package com.qozz.worldwidehotelsystem.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -10,6 +11,7 @@ import java.util.Set;
 
 @Entity
 @Data
+@Accessors(chain = true)
 public class Room {
 
     @Id

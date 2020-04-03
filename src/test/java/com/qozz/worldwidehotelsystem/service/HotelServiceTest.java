@@ -5,7 +5,7 @@ import com.qozz.worldwidehotelsystem.data.dto.HotelInfoDto;
 import com.qozz.worldwidehotelsystem.data.entity.Hotel;
 import com.qozz.worldwidehotelsystem.data.mapping.HotelMapper;
 import com.qozz.worldwidehotelsystem.data.repository.HotelRepository;
-import com.qozz.worldwidehotelsystem.exception.HotelDoesNotExist;
+import com.qozz.worldwidehotelsystem.exception.HotelDoesNotExistException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -63,7 +63,7 @@ public class HotelServiceTest {
     public void getHotelByIdWhenHotelDoesNotExist() {
         when(hotelRepository.findHotelById(1L)).thenReturn(Optional.empty());
 
-        expectedEx.expect(HotelDoesNotExist.class);
+        expectedEx.expect(HotelDoesNotExistException.class);
         expectedEx.expectMessage(HOTEL_DOES_NOT_EXIST);
 
         hotelService.getHotelById(1L);
@@ -126,7 +126,7 @@ public class HotelServiceTest {
     public void changeHotelWhenHotelDoesNotExist() {
         when(hotelRepository.findHotelById(1L)).thenReturn(Optional.of(hotel));
 
-        expectedEx.expect(HotelDoesNotExist.class);
+        expectedEx.expect(HotelDoesNotExistException.class);
         expectedEx.expectMessage(HOTEL_DOES_NOT_EXIST);
 
         hotelService.changeHotel(new Hotel(), 1L);

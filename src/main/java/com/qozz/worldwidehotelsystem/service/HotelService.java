@@ -4,7 +4,7 @@ import com.qozz.worldwidehotelsystem.data.dto.HotelInfoDto;
 import com.qozz.worldwidehotelsystem.data.entity.Hotel;
 import com.qozz.worldwidehotelsystem.data.mapping.HotelMapper;
 import com.qozz.worldwidehotelsystem.data.repository.HotelRepository;
-import com.qozz.worldwidehotelsystem.exception.HotelDoesNotExist;
+import com.qozz.worldwidehotelsystem.exception.HotelDoesNotExistException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,7 @@ public class HotelService {
 
     public Hotel getHotelById(Long hotelId) {
         return hotelRepository.findHotelById(hotelId)
-                .orElseThrow(() -> new HotelDoesNotExist(HOTEL_DOES_NOT_EXIST));
+                .orElseThrow(() -> new HotelDoesNotExistException(HOTEL_DOES_NOT_EXIST));
     }
 
     public List<HotelInfoDto> getHotelsInfo(String country, String city) {
@@ -45,7 +45,7 @@ public class HotelService {
                     hotel.setNumber(newHotel.getNumber());
                     return hotelRepository.saveAndFlush(hotel);
                 })
-                .orElseThrow(() -> new HotelDoesNotExist(HOTEL_DOES_NOT_EXIST));
+                .orElseThrow(() -> new HotelDoesNotExistException(HOTEL_DOES_NOT_EXIST));
     }
 
     @Transactional
