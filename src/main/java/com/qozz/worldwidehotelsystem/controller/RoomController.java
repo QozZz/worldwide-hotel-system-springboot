@@ -19,6 +19,11 @@ public class RoomController {
 
     private final RoomService roomService;
 
+    @GetMapping(value = "/{roomId}")
+    public Room getRoom(@PathVariable Long roomId) {
+        return roomService.getRoomById(roomId);
+    }
+
     @GetMapping
     public List<Room> getFreeHotelRooms(@PathVariable Long hotelId,
                                         @RequestParam(value = "start")
