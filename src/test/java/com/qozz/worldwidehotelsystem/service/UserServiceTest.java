@@ -1,19 +1,25 @@
 package com.qozz.worldwidehotelsystem.service;
 
+import com.google.common.collect.ImmutableList;
 import com.qozz.worldwidehotelsystem.config.security.JwtProvider;
 import com.qozz.worldwidehotelsystem.data.dto.LoginDto;
 import com.qozz.worldwidehotelsystem.data.dto.SignUpDto;
+import com.qozz.worldwidehotelsystem.data.dto.UserInfoDto;
 import com.qozz.worldwidehotelsystem.data.entity.User;
 import com.qozz.worldwidehotelsystem.data.enumeration.Role;
+import com.qozz.worldwidehotelsystem.data.mapping.UserMapper;
 import com.qozz.worldwidehotelsystem.data.repository.UserRepository;
 import com.qozz.worldwidehotelsystem.exception.AuthenticationException;
 import com.qozz.worldwidehotelsystem.exception.PasswordsAreNotEqualsException;
 import com.qozz.worldwidehotelsystem.exception.UserAlreadyExistException;
+import com.qozz.worldwidehotelsystem.exception.UserDoesNotExistException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -22,10 +28,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -42,7 +48,8 @@ public class UserServiceTest {
     private SignUpDto signUpDto;
     private LoginDto loginDto;
     private User user;
-
+    private List<User> users;
+    private List<UserInfoDto> userInfoDtoList;
 
     @InjectMocks
     private UserService userService;
@@ -62,11 +69,103 @@ public class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Spy
+    private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+
     @Before
     public void setUp() {
         signUpDto = initSignUpDto();
         loginDto = initLoginDTO();
         user = initUser();
+        users = initUserList();
+        userInfoDtoList = initUserInfoList();
+    }
+
+    @Test
+    public void getUserWhenUserExists() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        userService.getUser(1L);
+
+        verify(userRepository).findById(1L);
+    }
+
+    @Test(expected = UserDoesNotExistException.class)
+    public void getUserWhenUserDoesNotExist() {
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        userService.getUser(1L);
+
+        verify(userRepository).findById(1L);
+    }
+
+    @Test
+    public void getUserInfoListWhenUsersDoNotExist() {
+        when(userRepository.findAll()).thenReturn(Collections.emptyList());
+
+        List<UserInfoDto> usersInfo = userService.getUserInfoList();
+
+        verify(userMapper).userListToUserIntoDtoList(anyList());
+        verify(userRepository).findAll();
+
+        assertNotNull(usersInfo);
+        assertEquals(0, usersInfo.size());
+    }
+
+    @Test
+    public void getUserInfoListWhenUsersExist() {
+        when(userRepository.findAll()).thenReturn(users);
+
+        List<UserInfoDto> usersInfo = userService.getUserInfoList();
+
+        verify(userMapper).userListToUserIntoDtoList(users);
+        verify(userRepository).findAll();
+
+        assertEquals(userInfoDtoList, usersInfo);
+    }
+
+    @Test(expected = UserDoesNotExistException.class)
+    public void changeUserWhenUserDoesNotExist() {
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        userService.changeUser(user, 1L);
+
+        verify(userRepository).findById(1L);
+    }
+
+    @Test
+    public void changeUserWhenUserExists() {
+        User newUser = user.setId(10L);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.saveAndFlush(any(User.class))).thenReturn(newUser);
+
+        User savedUser = userService.changeUser(newUser, 1L);
+
+        verify(userRepository).findById(1L);
+        verify(userRepository).saveAndFlush(any(User.class));
+
+        assertNotNull(savedUser);
+        assertEquals(newUser, savedUser);
+    }
+
+    @Test
+    public void deleteUserWhenUserExists() {
+        doNothing().when(userRepository).deleteById(1L);
+
+        userRepository.deleteById(1L);
+
+        verify(userRepository).deleteById(1L);
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    public void deleteUserWhenUserDoesNotExist() {
+        doNothing().when(userRepository).deleteById(1L);
+
+        userRepository.deleteById(1L);
+
+        verify(userRepository).deleteById(1L);
+        verifyNoMoreInteractions(userRepository);
     }
 
     @Test(expected = AuthenticationException.class)
@@ -167,5 +266,31 @@ public class UserServiceTest {
                 .setUsername(USER_NAME)
                 .setPassword(PASSWORD)
                 .setRepeatPassword(PASSWORD);
+    }
+
+    private List<User> initUserList() {
+        return ImmutableList.of(
+                new User()
+                        .setId(1L)
+                        .setUsername("userOne")
+                        .setPassword("passwordOne")
+                        .setRoles(Collections.singleton(Role.ADMIN)),
+                new User()
+                        .setId(2L)
+                        .setUsername("userTwo")
+                        .setPassword("passwordTwo")
+                        .setRoles(Collections.singleton(Role.USER)));
+    }
+
+    private List<UserInfoDto> initUserInfoList() {
+        return ImmutableList.of(
+                new UserInfoDto()
+                        .setId(1L)
+                        .setUsername("userOne")
+                        .setRoles(Collections.singleton(Role.ADMIN)),
+                new UserInfoDto()
+                        .setId(2L)
+                        .setUsername("userTwo")
+                        .setRoles(Collections.singleton(Role.USER)));
     }
 }

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.qozz.worldwidehotelsystem.exception.ExceptionMessages.HOTEL_DOES_NOT_EXIST;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -28,7 +29,6 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class HotelServiceTest {
 
-    private final static String HOTEL_DOES_NOT_EXIST = "Hotel does not exist!";
     private List<Hotel> hotels;
     private Hotel hotel;
 
@@ -52,16 +52,16 @@ public class HotelServiceTest {
 
     @Test
     public void getHotelByIdWhenHotelExists() {
-        when(hotelRepository.findHotelById(1L)).thenReturn(Optional.of(hotel));
+        when(hotelRepository.findById(1L)).thenReturn(Optional.of(hotel));
 
         hotelService.getHotelById(1L);
 
-        verify(hotelRepository).findHotelById(1L);
+        verify(hotelRepository).findById(1L);
     }
 
     @Test
     public void getHotelByIdWhenHotelDoesNotExist() {
-        when(hotelRepository.findHotelById(1L)).thenReturn(Optional.empty());
+        when(hotelRepository.findById(1L)).thenReturn(Optional.empty());
 
         expectedEx.expect(HotelDoesNotExistException.class);
         expectedEx.expectMessage(HOTEL_DOES_NOT_EXIST);
@@ -111,12 +111,12 @@ public class HotelServiceTest {
 
     @Test
     public void changeHotelWhenHotelExists() {
-        when(hotelRepository.findHotelById(1L)).thenReturn(Optional.of(hotel));
+        when(hotelRepository.findById(1L)).thenReturn(Optional.of(hotel));
         when(hotelRepository.saveAndFlush(any(Hotel.class))).thenReturn(hotel);
 
         Hotel changedHotel = hotelService.changeHotel(new Hotel(), 1L);
 
-        verify(hotelRepository).findHotelById(1L);
+        verify(hotelRepository).findById(1L);
         verify(hotelRepository).saveAndFlush(any(Hotel.class));
 
         assertNotNull(changedHotel);
@@ -124,7 +124,7 @@ public class HotelServiceTest {
 
     @Test
     public void changeHotelWhenHotelDoesNotExist() {
-        when(hotelRepository.findHotelById(1L)).thenReturn(Optional.of(hotel));
+        when(hotelRepository.findById(1L)).thenReturn(Optional.of(hotel));
 
         expectedEx.expect(HotelDoesNotExistException.class);
         expectedEx.expectMessage(HOTEL_DOES_NOT_EXIST);

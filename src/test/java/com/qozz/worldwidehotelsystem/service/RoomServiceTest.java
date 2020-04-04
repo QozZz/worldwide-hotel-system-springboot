@@ -25,15 +25,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.qozz.worldwidehotelsystem.exception.ExceptionMessages.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RoomServiceTest {
 
-    private final static String ROOM_DOES_NOT_EXIST = "Room does not exist!";
-    public final static String USER_DOES_NOT_EXIST = "User does not exist!";
-    public static final String ROOM_IS_ALREADY_RENTED = "Room is already rented!";
     private List<Room> freeRooms;
     private Room room;
     private LocalDate start;
@@ -68,23 +66,23 @@ public class RoomServiceTest {
 
     @Test
     public void getRoomByIdWhenRoomExists() {
-        when(roomRepository.findRoomById(1L)).thenReturn(Optional.of(room));
+        when(roomRepository.findById(1L)).thenReturn(Optional.of(room));
 
         roomService.getRoomById(1L);
 
-        verify(roomRepository).findRoomById(1L);
+        verify(roomRepository).findById(1L);
     }
 
     @Test
     public void getRoomByIdWhenRoomDoesNotExist() {
-        when(roomRepository.findRoomById(1L)).thenReturn(Optional.empty());
+        when(roomRepository.findById(1L)).thenReturn(Optional.empty());
 
         expectedEx.expect(RoomDoesNotExistException.class);
         expectedEx.expectMessage(ROOM_DOES_NOT_EXIST);
 
         roomService.getRoomById(1L);
 
-        verify(roomRepository).findRoomById(1L);
+        verify(roomRepository).findById(1L);
     }
 
     @Test
@@ -111,14 +109,14 @@ public class RoomServiceTest {
     public void rentRoom() {
         when(roomRepository.findNumberOfRentedRooms(1L, start, end)).thenReturn(0);
         when(userRepository.findUserByUsername(anyString())).thenReturn(Optional.of(user));
-        when(roomRepository.findRoomById(1L)).thenReturn(Optional.of(room));
+        when(roomRepository.findById(1L)).thenReturn(Optional.of(room));
         when(scheduleRepository.saveAndFlush(any(Schedule.class))).thenReturn(schedule);
 
         Schedule savedSchedule = roomService.rentRoom(1L, start, end, "username");
 
         verify(roomRepository).findNumberOfRentedRooms(1L, start, end);
         verify(userRepository).findUserByUsername(anyString());
-        verify(roomRepository).findRoomById(1L);
+        verify(roomRepository).findById(1L);
         verify(scheduleRepository).saveAndFlush(any(Schedule.class));
 
         assertNotNull(savedSchedule);
@@ -149,7 +147,7 @@ public class RoomServiceTest {
     public void rentRoomWhenRoomDoesNotExist() {
         when(roomRepository.findNumberOfRentedRooms(1L, start, end)).thenReturn(0);
         when(userRepository.findUserByUsername(anyString())).thenReturn(Optional.of(user));
-        when(roomRepository.findRoomById(1L)).thenReturn(Optional.empty());
+        when(roomRepository.findById(1L)).thenReturn(Optional.empty());
 
         expectedEx.expect(RoomDoesNotExistException.class);
         expectedEx.expectMessage(ROOM_DOES_NOT_EXIST);

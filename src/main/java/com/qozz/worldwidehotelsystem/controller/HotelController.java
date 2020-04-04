@@ -16,15 +16,15 @@ public class HotelController {
 
     private final HotelService hotelService;
 
+    @GetMapping(value = "/{hotelId}")
+    public Hotel getHotel(@PathVariable Long hotelId) {
+        return hotelService.getHotelById(hotelId);
+    }
+
     @GetMapping()
     public List<HotelInfoDto> getAllHotelsInfo(@RequestParam(required = false, defaultValue = "") String country,
                                                @RequestParam(required = false, defaultValue = "") String city) {
         return hotelService.getHotelsInfo(country, city);
-    }
-
-    @GetMapping(value = "/{hotelId}")
-    public Hotel getHotel(@PathVariable Long hotelId) {
-        return hotelService.getHotelById(hotelId);
     }
 
     @PostMapping

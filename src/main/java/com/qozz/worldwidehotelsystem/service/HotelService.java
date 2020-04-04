@@ -11,17 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.qozz.worldwidehotelsystem.exception.ExceptionMessages.HOTEL_DOES_NOT_EXIST;
+
 @Service
 @AllArgsConstructor
 public class HotelService {
-
-    private final static String HOTEL_DOES_NOT_EXIST = "Hotel does not exist!";
 
     private final HotelRepository hotelRepository;
     private final HotelMapper hotelMapper;
 
     public Hotel getHotelById(Long hotelId) {
-        return hotelRepository.findHotelById(hotelId)
+        return hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new HotelDoesNotExistException(HOTEL_DOES_NOT_EXIST));
     }
 
@@ -35,7 +35,7 @@ public class HotelService {
     }
 
     public Hotel changeHotel(Hotel newHotel, Long hotelId) {
-        return hotelRepository.findHotelById(hotelId)
+        return hotelRepository.findById(hotelId)
                 .map(hotel -> {
                     hotel.setName(newHotel.getName());
                     hotel.setStars(newHotel.getStars());

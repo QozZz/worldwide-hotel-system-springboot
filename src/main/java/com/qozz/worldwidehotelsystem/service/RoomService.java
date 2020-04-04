@@ -15,20 +15,18 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.qozz.worldwidehotelsystem.exception.ExceptionMessages.*;
+
 @Service
 @AllArgsConstructor
 public class RoomService {
-
-    private final static String ROOM_DOES_NOT_EXIST = "Room does not exist!";
-    public final static String USER_DOES_NOT_EXIST = "User does not exist!";
-    public static final String ROOM_IS_ALREADY_RENTED = "Room is already rented!";
 
     private final RoomRepository roomRepository;
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
 
     public Room getRoomById(Long roomId) {
-        return roomRepository.findRoomById(roomId)
+        return roomRepository.findById(roomId)
                 .orElseThrow(() -> new RoomDoesNotExistException(ROOM_DOES_NOT_EXIST));
     }
 
@@ -43,7 +41,7 @@ public class RoomService {
 
         User user = userRepository.findUserByUsername(username)
                 .orElseThrow(() -> new UserDoesNotExistException(USER_DOES_NOT_EXIST));
-        Room room =  roomRepository.findRoomById(roomId)
+        Room room =  roomRepository.findById(roomId)
                 .orElseThrow(() -> new RoomDoesNotExistException(ROOM_DOES_NOT_EXIST));
 
         Schedule schedule = new Schedule()

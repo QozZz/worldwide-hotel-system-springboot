@@ -10,8 +10,6 @@ import java.util.Optional;
 
 public interface HotelRepository extends JpaRepository<Hotel, Long> {
 
-    Optional<Hotel> findHotelById(Long hotelId);
-
     void deleteHotelById(Long hotelId);
 
     @Query(value = "select * from hotel\n" +

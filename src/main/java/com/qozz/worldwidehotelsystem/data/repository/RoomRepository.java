@@ -11,8 +11,6 @@ import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
-    Optional<Room> findRoomById(Long roomId);
-
     @Query(value = "select r.id, r.floor, r.number, r.hotel_id\n" +
             "    from schedule as s\n" +
             "    join room r on s.room_id = r.id\n" +
