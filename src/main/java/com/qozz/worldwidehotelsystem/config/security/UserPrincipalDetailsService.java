@@ -18,7 +18,7 @@ public class UserPrincipalDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = userRepository.findUserByUsername(username);
         return user.map(this::toUserDetails).orElseThrow(
                 () -> new UsernameNotFoundException("Wrong login"));
     }

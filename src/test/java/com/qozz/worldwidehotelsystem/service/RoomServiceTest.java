@@ -110,14 +110,14 @@ public class RoomServiceTest {
     @Test
     public void rentRoom() {
         when(roomRepository.findNumberOfRentedRooms(1L, start, end)).thenReturn(0);
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findUserByUsername(anyString())).thenReturn(Optional.of(user));
         when(roomRepository.findRoomById(1L)).thenReturn(Optional.of(room));
         when(scheduleRepository.saveAndFlush(any(Schedule.class))).thenReturn(schedule);
 
         Schedule savedSchedule = roomService.rentRoom(1L, start, end, "username");
 
         verify(roomRepository).findNumberOfRentedRooms(1L, start, end);
-        verify(userRepository).findByUsername(anyString());
+        verify(userRepository).findUserByUsername(anyString());
         verify(roomRepository).findRoomById(1L);
         verify(scheduleRepository).saveAndFlush(any(Schedule.class));
 
@@ -137,7 +137,7 @@ public class RoomServiceTest {
     @Test
     public void rentRoomWhenUserDoesNotExist() {
         when(roomRepository.findNumberOfRentedRooms(1L, start, end)).thenReturn(0);
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findUserByUsername(anyString())).thenReturn(Optional.empty());
 
         expectedEx.expect(UserDoesNotExistException.class);
         expectedEx.expectMessage(USER_DOES_NOT_EXIST);
@@ -148,7 +148,7 @@ public class RoomServiceTest {
     @Test
     public void rentRoomWhenRoomDoesNotExist() {
         when(roomRepository.findNumberOfRentedRooms(1L, start, end)).thenReturn(0);
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findUserByUsername(anyString())).thenReturn(Optional.of(user));
         when(roomRepository.findRoomById(1L)).thenReturn(Optional.empty());
 
         expectedEx.expect(RoomDoesNotExistException.class);

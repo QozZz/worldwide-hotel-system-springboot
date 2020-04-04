@@ -41,7 +41,7 @@ public class RoomService {
             throw new RoomAlreadyRentedException(ROOM_IS_ALREADY_RENTED);
         }
 
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findUserByUsername(username)
                 .orElseThrow(() -> new UserDoesNotExistException(USER_DOES_NOT_EXIST));
         Room room =  roomRepository.findRoomById(roomId)
                 .orElseThrow(() -> new RoomDoesNotExistException(ROOM_DOES_NOT_EXIST));

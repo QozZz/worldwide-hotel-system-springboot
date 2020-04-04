@@ -7,6 +7,7 @@ import com.qozz.worldwidehotelsystem.data.entity.User;
 import com.qozz.worldwidehotelsystem.data.enumeration.Role;
 import com.qozz.worldwidehotelsystem.data.repository.UserRepository;
 import com.qozz.worldwidehotelsystem.exception.AuthenticationException;
+import com.qozz.worldwidehotelsystem.exception.PasswordsAreNotEqualsException;
 import com.qozz.worldwidehotelsystem.exception.UserAlreadyExistException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +29,8 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private static final String MESSAGE_WRONG_PASSWORD = "Wrong password!";
-    public static final String MESSAGE_WRONG_LOGIN = "Wrong username!";
+    private static final String MESSAGE_WRONG_USER_NAME = "Wrong username!";
+    private static final String PASSWORDS_ARE_NOT_EQUALS = "passwords are not equals! ";
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
@@ -37,14 +39,14 @@ public class UserService {
     @Transactional
     public String createUserToken(LoginDto loginDto) {
         String username = loginDto.getUsername();
-        if (userRepository.findByUsername(username).isPresent()) {
+        if (userRepository.findUserByUsername(username).isPresent()) {
             try {
                 return getAuthenticationToken(loginDto);
             } catch (BadCredentialsException e) {
                 throw new AuthenticationException(MESSAGE_WRONG_PASSWORD);
             }
         } else {
-            throw new AuthenticationException(MESSAGE_WRONG_LOGIN);
+            throw new AuthenticationException(MESSAGE_WRONG_USER_NAME);
         }
     }
 
@@ -57,15 +59,12 @@ public class UserService {
         return jwtProvider.createToken(username, roles);
     }
 
-    public Optional<User> getUser(String username) {
-        return userRepository.findByUsername(username);
-    }
-
     public User createUser(SignUpDto signUpDto) {
         if (!signUpDto.getPassword().equals(signUpDto.getRepeatPassword())) {
-            throw new RuntimeException("passwords are not equals!");
+            throw new PasswordsAreNotEqualsException(PASSWORDS_ARE_NOT_EQUALS, signUpDto);
         }
-        Optional<User> newUser = userRepository.findByUsername(signUpDto.getUsername());
+
+        Optional<User> newUser = userRepository.findUserByUsername(signUpDto.getUsername());
 
         if (newUser.isPresent()) {
             throw new UserAlreadyExistException("User with username (" + signUpDto.getUsername() + ") already exist!");
@@ -76,6 +75,6 @@ public class UserService {
                 .setPassword(passwordEncoder.encode(signUpDto.getPassword()))
                 .setRoles(Collections.singleton(Role.USER));
 
-        return userRepository.save(user);
+        return userRepository.saveAndFlush(user);
     }
 }
