@@ -20,7 +20,7 @@ public class RoomController {
     private final RoomService roomService;
 
     @GetMapping(value = "/{roomId}")
-    public Room getRoom(@PathVariable Long roomId) {
+    public Room getRoomById(@PathVariable Long roomId) {
         return roomService.getRoomById(roomId);
     }
 
