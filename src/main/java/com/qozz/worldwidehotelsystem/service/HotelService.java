@@ -49,7 +49,7 @@ public class HotelService {
     }
 
     @Transactional
-    public void deleteHotel(Long hotelId) {
+    public void deleteHotelById(Long hotelId) {
         hotelRepository.deleteHotelById(hotelId);
     }
 }

@@ -17,7 +17,7 @@ public class HotelController {
     private final HotelService hotelService;
 
     @GetMapping(value = "/{hotelId}")
-    public Hotel getHotel(@PathVariable Long hotelId) {
+    public Hotel getHotelById(@PathVariable Long hotelId) {
         return hotelService.getHotelById(hotelId);
     }
 
@@ -42,6 +42,6 @@ public class HotelController {
     @DeleteMapping(value = "/{hotelId}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public void deleteHotel(@PathVariable Long hotelId) {
-        hotelService.deleteHotel(hotelId);
+        hotelService.deleteHotelById(hotelId);
     }
 }

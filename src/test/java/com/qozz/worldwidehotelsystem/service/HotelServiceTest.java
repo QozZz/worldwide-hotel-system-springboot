@@ -137,7 +137,7 @@ public class HotelServiceTest {
     @Test
     public void deleteHotelWhenHotelExists() {
         doNothing().when(hotelRepository).deleteHotelById(1L);
-        hotelService.deleteHotel(1L);
+        hotelService.deleteHotelById(1L);
 
         verify(hotelRepository).deleteHotelById(1L);
         verifyNoMoreInteractions(hotelRepository);
@@ -147,7 +147,7 @@ public class HotelServiceTest {
     public void deleteHotelWhenHotelDoesNotExist() {
         doNothing().when(hotelRepository).deleteHotelById(1L);
 
-        hotelService.deleteHotel(1L);
+        hotelService.deleteHotelById(1L);
 
         verify(hotelRepository).deleteHotelById(1L);
         verifyNoMoreInteractions(hotelRepository);
