@@ -1,0 +1,32 @@
+[33m6f1eebd8b6d914aa6413d1bb0e846ed5ed450aa7[m[33m ([m[1;36mHEAD -> [m[1;32mimplement_hotel_system[m[33m)[m add tests for UserController
+[33m0df6e3da4dfc8919ca871b0c0d094db0cdae4ce0[m add tests for SecurityConfiguration
+[33m93cb491b4ba2ff4fa73af65ea226fffd436bd47d[m add tests for RoomController
+[33mc100d297e10e27050bb308ac0139877b6f3938e1[m add tests for HotelController
+[33m8da52c53ca81a5732f942ff4dd1264a9de8b9437[m add tests for HomeController
+[33m4a403b8b1822aa3a13e2aed3dc091c14a6d7bb64[m add tests for JwtFilter
+[33mca1f2fd1fb78125e258e883d47bfbac5f353dd5f[m add tests for JwtProvider
+[33mef5986070575b2ae008ff049d371269c0a146bab[m add tests for UserPrincipalDetailsService
+[33m48e21e2394a1fcbb3a8e0c2b0e7016bc21ca4122[m move CRUD logic from UserController to UserService, add class for exception messages, add UserMapper
+[33m22b93e874726331cd8bcf970ce685f006c5f1334[m add tests for UserService
+[33maf58121088b4186cff7aaa16e72b5ab7a2f91164[m implement the ability to get info about particular room in RoomController
+[33m7ba10f2dbd4fa93f741e120a044e4a1ed85d2fd1[m add tests for RoomService, change exception names
+[33m5c2bc4add17b11d3bd08fa181964c39677238fad[m add tests for HotelService, delete entity Address and add its fields to entity Hotel, split HotelController on HotelController and RoomController
+[33m414116a93030ac9fda7817cba00c418c7cae29b4[m implement the ability to rent a free hotel room implement the ability to rent a free hotel room
+[33m567a1bdd32d6b35640fe1dc7a6af9ed851f26d7c[m implement the ability to search for available rooms in a particular hotel
+[33m8593cb1f61394f56cbd99cb56723b0b07b5dc3ff[m implement the aliblity to search for hotels according to specified criteria
+[33m80af54f06223cedb2950fdb3550b74c1ca85df09[m add entity Schedule
+[33m038f0f4f84315060ba204e844c74b3ca31741e8d[m implement sign-up system
+[33m9437d26df694d59be4c94d9437b810c6b2acfc6d[m add entity Room
+[33mcbc8b2f2149f557bf41200835fc48a3aa4f06614[m add new Role MODERATOR. MODERATOR can crate new hotel
+[33m3cfa1254e690217f3a4f2ef5fae319559afc9178[m implement ability to restrict access to post, put, delete methods in HomeController
+[33m7c1b8534aee03e20145124f815e0a4181f4487c5[m implement CRUD for HotelController (create HotelService, HotelRepository, entity Hotel, HotelDoesNotExist exception)
+[33m9b635e18c5590962357ee0831c82a2c9d8d21f1f[m add entity Hotel
+[33mb000e2ed868da9d3505cef1d6a1e1346fa9dbfd2[m add entity Address
+[33md02e66e6273d3cabb3affdd34f4142e1c4fa73ae[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mdevelop[m[33m)[m Merge pull request #2 from QozZz/security
+[33m5d3697ba5cac31e36880bfbf6be7e177dacdb219[m[33m ([m[1;31morigin/security[m[33m, [m[1;32msecurity[m[33m)[m implement security with JSON Web Token
+[33mfb377eb4b95dcc5cffc4a87a265ff2a4bf09ab77[m Merge pull request #1 from QozZz/configure_DB
+[33mc7fcb0ef4d237d51387a306e8bbfc04a953b95bf[m[33m ([m[1;31morigin/configure_DB[m[33m, [m[1;32mconfigure_DB[m[33m)[m create UserController
+[33m4f1304bd302b626a9ec9fce8e6c7b64311e89284[m add User entity and UserRepository
+[33mfbe4b8438a4862ff469cfc49ed0df1665ee7b776[m add data properties
+[33m583fcbfd00c0de425f8ac4470c787e3b274b43e4[m add dependency postgresql
+[33mbaecf17abb5eace5fc932e0ca329cd3c550b8e37[m[33m ([m[1;31morigin/master[m[33m, [m[1;32mmaster[m[33m)[m Initial commit
