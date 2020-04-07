@@ -63,7 +63,7 @@ public class UserService {
         return jwtProvider.createToken(username, roles);
     }
 
-    public User getUser(Long userId) {
+    public User getUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new UserDoesNotExistException(USER_DOES_NOT_EXIST));
     }
@@ -102,7 +102,7 @@ public class UserService {
                 .orElseThrow(() -> new UserDoesNotExistException(USER_DOES_NOT_EXIST));
     }
 
-    public void deleteUser(Long userId) {
+    public void deleteUserById(Long userId) {
         userRepository.deleteById(userId);
     }
 }

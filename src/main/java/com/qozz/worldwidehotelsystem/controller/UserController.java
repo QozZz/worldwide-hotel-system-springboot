@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "admin/users")
+@RequestMapping(value = "/admin/users")
 @AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
     @GetMapping
-    public List<UserInfoDto> getAllUsers() {
+    public List<UserInfoDto> getUsers() {
         return userService.getUserInfoList();
     }
 
     @GetMapping(value = "/{userId}")
-    public User getUser(@PathVariable Long userId) {
-        return userService.getUser(userId);
+    public User getUserById(@PathVariable Long userId) {
+        return userService.getUserById(userId);
     }
 
     @PostMapping
@@ -38,6 +38,6 @@ public class UserController {
 
     @DeleteMapping(value = "/{userId}")
     public void deleteUser(@PathVariable Long userId) {
-        userService.deleteUser(userId);
+        userService.deleteUserById(userId);
     }
 }

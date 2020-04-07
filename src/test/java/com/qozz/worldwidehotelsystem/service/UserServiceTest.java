@@ -85,7 +85,7 @@ public class UserServiceTest {
     public void getUserWhenUserExists() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        userService.getUser(1L);
+        userService.getUserById(1L);
 
         verify(userRepository).findById(1L);
     }
@@ -94,7 +94,7 @@ public class UserServiceTest {
     public void getUserWhenUserDoesNotExist() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        userService.getUser(1L);
+        userService.getUserById(1L);
 
         verify(userRepository).findById(1L);
     }
