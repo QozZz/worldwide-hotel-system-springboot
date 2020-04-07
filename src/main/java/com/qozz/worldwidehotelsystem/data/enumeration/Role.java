@@ -1,6 +1,5 @@
 package com.qozz.worldwidehotelsystem.data.enumeration;
 
 public enum Role {
-    ADMIN, USER
+    ADMIN, USER, MODERATOR
 }
-

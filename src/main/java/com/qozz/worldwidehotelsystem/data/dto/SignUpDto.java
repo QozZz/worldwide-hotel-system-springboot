@@ -5,8 +5,9 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class LoginDto {
+public class SignUpDto {
 
     private String username;
     private String password;
+    private String repeatPassword;
 }

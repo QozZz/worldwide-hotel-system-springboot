@@ -22,4 +22,3 @@ public class LoginController {
                 JwtProvider.TOKEN_PREFIX + userService.createUserToken(loginDto));
     }
 }
-
