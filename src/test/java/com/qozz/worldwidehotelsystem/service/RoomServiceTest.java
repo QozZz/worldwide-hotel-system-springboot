@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.qozz.worldwidehotelsystem.exception.ExceptionMessages.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

@@ -168,5 +168,4 @@ public class HotelControllerTest {
         assert inputStream != null;
         return IOUtils.toString(inputStream, StandardCharsets.UTF_8.name());
     }
-
 }
