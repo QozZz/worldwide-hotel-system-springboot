@@ -1,5 +1,6 @@
 package com.qozz.worldwidehotelsystem.service;
 
+import com.qozz.worldwidehotelsystem.data.dto.RentRoomDto;
 import com.qozz.worldwidehotelsystem.data.entity.Room;
 import com.qozz.worldwidehotelsystem.data.entity.Schedule;
 import com.qozz.worldwidehotelsystem.data.entity.User;
@@ -30,26 +31,31 @@ public class RoomService {
                 .orElseThrow(() -> new RoomDoesNotExistException(ROOM_DOES_NOT_EXIST));
     }
 
-    public List<Room> getFreeRoomsInHotel(Long hotelId, LocalDate start, LocalDate end) {
-        return roomRepository.findAllFreeByHotelId(hotelId, start, end);
+    public List<Room> getFreeRoomsInHotel(Long hotelId, LocalDate rentStart, LocalDate rentEnd) {
+        return roomRepository.findAllFreeByHotelId(hotelId, rentStart, rentEnd);
     }
 
-    public Schedule rentRoom(Long roomId, LocalDate start, LocalDate end, String username) {
-        if (roomRepository.findNumberOfRentedRooms(roomId, start, end) != 0) {
+    public Schedule rentRoom(RentRoomDto rentRoomDto, String username) {
+        if (getNumberOfRentedRooms(rentRoomDto) != 0) {
             throw new RoomAlreadyRentedException(ROOM_IS_ALREADY_RENTED);
         }
 
         User user = userRepository.findUserByUsername(username)
                 .orElseThrow(() -> new UserDoesNotExistException(USER_DOES_NOT_EXIST));
-        Room room =  roomRepository.findById(roomId)
+        Room room =  roomRepository.findById(rentRoomDto.getId())
                 .orElseThrow(() -> new RoomDoesNotExistException(ROOM_DOES_NOT_EXIST));
 
         Schedule schedule = new Schedule()
                 .setRoom(room)
                 .setUser(user)
-                .setRegisterStart(start)
-                .setRegisterEnd(end);
+                .setRentStart(rentRoomDto.getRentStart())
+                .setRentEnd(rentRoomDto.getRentEnd());
 
         return scheduleRepository.saveAndFlush(schedule);
+    }
+
+    private int getNumberOfRentedRooms(RentRoomDto rentRoomDto) {
+        return roomRepository.findNumberOfRentedRooms(
+                rentRoomDto.getId(), rentRoomDto.getRentStart(), rentRoomDto.getRentEnd());
     }
 }

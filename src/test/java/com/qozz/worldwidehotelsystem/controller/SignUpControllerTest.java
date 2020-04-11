@@ -53,7 +53,7 @@ public class SignUpControllerTest {
     @Before
     public void setUp() throws IOException {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-        jsonSignUp = readJsonWithFile("SignUpJSON.json");
+        jsonSignUp = readJsonWithFile("json/SignUpJSON.json");
         signUpDto = initSignUpDto();
         user = initUser();
     }

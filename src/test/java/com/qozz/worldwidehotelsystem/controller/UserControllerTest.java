@@ -61,8 +61,8 @@ public class UserControllerTest {
         user = initUser();
         users = initUsers();
         usersInfo = initUsersInfo();
-        jsonSignUp = readJsonWithFile("SignUpJSON.json");
-        jsonUser = readJsonWithFile("UserJSON.json");
+        jsonSignUp = readJsonWithFile("json/SignUpJSON.json");
+        jsonUser = readJsonWithFile("json/UserJSON.json");
         signUpDto = initSignUpDto();
     }
 

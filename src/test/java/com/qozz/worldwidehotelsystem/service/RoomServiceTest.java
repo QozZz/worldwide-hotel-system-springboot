@@ -1,6 +1,7 @@
 package com.qozz.worldwidehotelsystem.service;
 
 import com.google.common.collect.ImmutableList;
+import com.qozz.worldwidehotelsystem.data.dto.RentRoomDto;
 import com.qozz.worldwidehotelsystem.data.entity.Hotel;
 import com.qozz.worldwidehotelsystem.data.entity.Room;
 import com.qozz.worldwidehotelsystem.data.entity.Schedule;
@@ -32,12 +33,29 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class RoomServiceTest {
 
+    private static final long HOTEL_ID = 1L;
+    private static final String HOTEL_NAME = "hotelOne";
+    private static final int HOTEL_STARS = 5;
+    private static final String HOTEL_COUNTRY = "Country";
+    private static final String HOTEL_CITY = "CityOne";
+    private static final String HOTEL_STREET = "StreetOne";
+    private static final String HOTEL_STREET_NUMBER = "11";
+
+    private static final long ROOM_ID = 1L;
+    private static final int ROOM_FLOOR = 1;
+    private static final int ROOM_NUMBER = 101;
+
+    private static final long USER_ID = 1L;
+    private static final String USER_NAME = "username";
+
+    private Hotel hotel;
     private List<Room> freeRooms;
     private Room room;
     private LocalDate start;
     private LocalDate end;
     private User user;
     private Schedule schedule;
+    private RentRoomDto rentRoomDto;
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
@@ -56,12 +74,14 @@ public class RoomServiceTest {
 
     @Before
     public void setUp() {
+        hotel = initHotel();
         freeRooms = initFreeRoomsList();
         room = initRoom();
         start = LocalDate.of(2020, 1, 1);
         end = LocalDate.of(2020, 2, 1);
         user = initUser();
         schedule = initSchedule();
+        rentRoomDto = initRentRoomDto();
     }
 
     @Test
@@ -112,7 +132,7 @@ public class RoomServiceTest {
         when(roomRepository.findById(1L)).thenReturn(Optional.of(room));
         when(scheduleRepository.saveAndFlush(any(Schedule.class))).thenReturn(schedule);
 
-        Schedule savedSchedule = roomService.rentRoom(1L, start, end, "username");
+        Schedule savedSchedule = roomService.rentRoom(rentRoomDto, "username");
 
         verify(roomRepository).findNumberOfRentedRooms(1L, start, end);
         verify(userRepository).findUserByUsername(anyString());
@@ -129,7 +149,7 @@ public class RoomServiceTest {
         expectedEx.expect(RoomAlreadyRentedException.class);
         expectedEx.expectMessage(ROOM_IS_ALREADY_RENTED);
 
-        roomService.rentRoom(1L, start, end, "username");
+        roomService.rentRoom(rentRoomDto, "username");
     }
 
     @Test
@@ -140,7 +160,7 @@ public class RoomServiceTest {
         expectedEx.expect(UserDoesNotExistException.class);
         expectedEx.expectMessage(USER_DOES_NOT_EXIST);
 
-        roomService.rentRoom(1L, start, end, "username");
+        roomService.rentRoom(rentRoomDto,"username");
     }
 
     @Test
@@ -152,59 +172,55 @@ public class RoomServiceTest {
         expectedEx.expect(RoomDoesNotExistException.class);
         expectedEx.expectMessage(ROOM_DOES_NOT_EXIST);
 
-        roomService.rentRoom(1L, start, end, "username");
+        roomService.rentRoom(rentRoomDto, "username");
+    }
+
+    private Hotel initHotel() {
+        return new Hotel()
+                .setId(HOTEL_ID)
+                .setName(HOTEL_NAME)
+                .setStars(HOTEL_STARS)
+                .setCountry(HOTEL_COUNTRY)
+                .setCity(HOTEL_CITY)
+                .setStreet(HOTEL_STREET)
+                .setNumber(HOTEL_STREET_NUMBER);
     }
 
     private Room initRoom() {
         return new Room()
-                .setId(1L)
-                .setFloor(1)
-                .setNumber(101)
-                .setHotel(
-                        new Hotel()
-                                .setId(1L)
-                                .setName("hotelOne")
-                                .setStars(5)
-                                .setCountry("Country")
-                                .setCity("CityOne")
-                                .setStreet("StreetOne")
-                                .setNumber("11"));
+                .setId(ROOM_ID)
+                .setFloor(ROOM_FLOOR)
+                .setNumber(ROOM_NUMBER)
+                .setHotel(hotel);
     }
 
     private List<Room> initFreeRoomsList() {
-        Hotel hotel = new Hotel()
-                .setId(1L)
-                .setName("hotelOne")
-                .setStars(5)
-                .setCountry("Country")
-                .setCity("CityOne")
-                .setStreet("StreetOne")
-                .setNumber("11");
-
         return ImmutableList.of(
                 new Room()
-                        .setId(1L)
-                        .setFloor(1)
-                        .setNumber(101)
-                        .setHotel(hotel),
-                new Room()
-                        .setId(2L)
-                        .setFloor(2)
-                        .setNumber(201)
+                        .setId(ROOM_ID)
+                        .setFloor(ROOM_FLOOR)
+                        .setNumber(ROOM_NUMBER)
                         .setHotel(hotel));
     }
 
     private User initUser() {
         return new User()
-                .setId(1L)
-                .setUsername("username");
+                .setId(USER_ID)
+                .setUsername(USER_NAME);
     }
 
     private Schedule initSchedule() {
         return new Schedule()
                 .setUser(user)
                 .setRoom(room)
-                .setRegisterStart(start)
-                .setRegisterEnd(end);
+                .setRentStart(start)
+                .setRentEnd(end);
+    }
+
+    private RentRoomDto initRentRoomDto() {
+        return new RentRoomDto()
+                .setId(ROOM_ID)
+                .setRentStart(start)
+                .setRentEnd(end);
     }
 }

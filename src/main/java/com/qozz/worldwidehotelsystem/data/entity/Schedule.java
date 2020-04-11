@@ -24,8 +24,8 @@ public class Schedule {
     private User user;
 
     @Column(nullable = false)
-    private LocalDate registerStart;
+    private LocalDate rentStart;
 
     @Column(nullable = false)
-    private LocalDate registerEnd;
+    private LocalDate rentEnd;
 }

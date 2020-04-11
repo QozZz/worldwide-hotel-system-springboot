@@ -1,5 +1,6 @@
 package com.qozz.worldwidehotelsystem.controller;
 
+import com.qozz.worldwidehotelsystem.data.dto.RentRoomDto;
 import com.qozz.worldwidehotelsystem.data.entity.Room;
 import com.qozz.worldwidehotelsystem.data.entity.Schedule;
 import com.qozz.worldwidehotelsystem.service.RoomService;
@@ -27,20 +28,16 @@ public class RoomController {
     @GetMapping
     public List<Room> getFreeHotelRooms(@PathVariable Long hotelId,
                                         @RequestParam(value = "start")
-                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate rentStart,
                                         @RequestParam(value = "end")
-                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
-        return roomService.getFreeRoomsInHotel(hotelId, start, end);
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate rentEnd) {
+        return roomService.getFreeRoomsInHotel(hotelId, rentStart, rentEnd);
     }
 
-    @PostMapping(value = "/rent/{roomId}")
+    @PostMapping(value = "/rent")
     @PreAuthorize("isAuthenticated()")
-    public Schedule rentRoom(@PathVariable Long roomId,
-                             @RequestParam(value = "start")
-                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
-                             @RequestParam(value = "end")
-                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
+    public Schedule rentRoom(@RequestBody RentRoomDto rentRoomDto,
                              @AuthenticationPrincipal String username) {
-        return roomService.rentRoom(roomId, start, end, username);
+        return roomService.rentRoom(rentRoomDto, username);
     }
 }
