@@ -24,6 +24,12 @@ public class Room {
     @Column(nullable = false)
     private int number;
 
+    @Column(nullable = false)
+    private int price;
+
+    @Column(nullable = false)
+    private boolean isAvailable;
+
     @ManyToOne
     @JoinColumn(name = "hotel_id", nullable = false)
     private Hotel hotel;
