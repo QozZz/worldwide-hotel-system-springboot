@@ -6,13 +6,16 @@ import com.qozz.worldwidehotelsystem.data.entity.Hotel;
 import com.qozz.worldwidehotelsystem.data.entity.Room;
 import com.qozz.worldwidehotelsystem.data.entity.Schedule;
 import com.qozz.worldwidehotelsystem.data.entity.User;
+import com.qozz.worldwidehotelsystem.data.mapping.RoomMapper;
 import com.qozz.worldwidehotelsystem.service.RoomService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -29,7 +32,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,8 +42,10 @@ public class RoomControllerTest {
     private static final String RENT_ROOM_ENDPOINT = ROOMS_ENDPOINT + "/rent/";
 
     private static final Long ROOM_ID = 1L;
+    private static final int ROOM_PRICE = 100;
     private static final int ROOM_FLOOR = 1;
     private static final int ROOM_NUMBER = 101;
+    private static final boolean ROOM_IS_AVAILABLE = true;
     private static final int EXPECTED_ROOM_ID = 1;
 
     private static final String HOTEL_NAME = "HotelOne";
@@ -76,6 +80,9 @@ public class RoomControllerTest {
 
     @Mock
     private RoomService roomService;
+
+    @Spy
+    private RoomMapper roomMapper = Mappers.getMapper(RoomMapper.class);
 
     private MockMvc mockMvc;
 
@@ -142,17 +149,17 @@ public class RoomControllerTest {
 
         mockMvc.perform(post(RENT_ROOM_ENDPOINT).contentType(APPLICATION_JSON).content(jsonRentRoomDto))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(EXPECTED_SCHEDULE_ID)))
-                .andExpect(jsonPath("$.rentStart[0]", is(start.getYear())))
-                .andExpect(jsonPath("$.rentStart[1]", is(start.getMonthValue())))
-                .andExpect(jsonPath("$.rentStart[2]", is(start.getDayOfMonth())))
-                .andExpect(jsonPath("$.rentEnd[0]", is(end.getYear())))
-                .andExpect(jsonPath("$.rentEnd[1]", is(end.getMonthValue())))
-                .andExpect(jsonPath("$.rentEnd[2]", is(end.getDayOfMonth())))
-                .andExpect(jsonPath("$.user.id", is(EXPECTED_USER_ID)))
-                .andExpect(jsonPath("$.room.id", is(EXPECTED_ROOM_ID)));
+                .andExpect(jsonPath("$.hotelName", is(HOTEL_NAME)))
+                .andExpect(jsonPath("$.floor", is(ROOM_FLOOR)))
+                .andExpect(jsonPath("$.number", is(ROOM_NUMBER)))
+                .andExpect(jsonPath("$.price", is(ROOM_PRICE)))
+                .andExpect(jsonPath("$.country", is(HOTEL_COUNTRY)))
+                .andExpect(jsonPath("$.city", is(HOTEL_CITY)))
+                .andExpect(jsonPath("$.street", is(HOTEL_STREET)))
+                .andExpect(jsonPath("$.streetNumber", is(HOTEL_STREET_NUMBER)));
 
         verify(roomService).rentRoom(rentRoomDto, null);
+        verify(roomMapper).scheduleToRoomInfoDto(schedule);
     }
 
     private User initUser() {
@@ -165,8 +172,10 @@ public class RoomControllerTest {
     private Room initRoom() {
         return new Room()
                 .setId(ROOM_ID)
+                .setPrice(ROOM_PRICE)
                 .setFloor(ROOM_FLOOR)
                 .setNumber(ROOM_NUMBER)
+                .setAvailable(ROOM_IS_AVAILABLE)
                 .setHotel(hotel);
     }
 
@@ -174,8 +183,10 @@ public class RoomControllerTest {
         return ImmutableList.of(
                 new Room()
                         .setId(ROOM_ID)
+                        .setPrice(ROOM_PRICE)
                         .setFloor(ROOM_FLOOR)
                         .setNumber(ROOM_NUMBER)
+                        .setAvailable(ROOM_IS_AVAILABLE)
                         .setHotel(hotel));
     }
 

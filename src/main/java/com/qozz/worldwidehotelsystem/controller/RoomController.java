@@ -1,8 +1,10 @@
 package com.qozz.worldwidehotelsystem.controller;
 
 import com.qozz.worldwidehotelsystem.data.dto.RentRoomDto;
+import com.qozz.worldwidehotelsystem.data.dto.RoomInfoDto;
 import com.qozz.worldwidehotelsystem.data.entity.Room;
 import com.qozz.worldwidehotelsystem.data.entity.Schedule;
+import com.qozz.worldwidehotelsystem.data.mapping.RoomMapper;
 import com.qozz.worldwidehotelsystem.service.RoomService;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,6 +21,7 @@ import java.util.List;
 public class RoomController {
 
     private final RoomService roomService;
+    private final RoomMapper roomMapper;
 
     @GetMapping(value = "/{roomId}")
     public Room getRoomById(@PathVariable Long roomId) {
@@ -36,8 +39,9 @@ public class RoomController {
 
     @PostMapping(value = "/rent")
     @PreAuthorize("isAuthenticated()")
-    public Schedule rentRoom(@RequestBody RentRoomDto rentRoomDto,
-                             @AuthenticationPrincipal String username) {
-        return roomService.rentRoom(rentRoomDto, username);
+    public RoomInfoDto rentRoom(@RequestBody RentRoomDto rentRoomDto,
+                                @AuthenticationPrincipal String username) {
+        Schedule schedule = roomService.rentRoom(rentRoomDto, username);
+        return roomMapper.scheduleToRoomInfoDto(schedule);
     }
 }
