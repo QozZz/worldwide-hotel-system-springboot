@@ -12,12 +12,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.time.LocalDate;
-
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -25,9 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @Transactional
 public class SecurityConfigurationTest {
-
-    private LocalDate start;
-    private LocalDate end;
 
     private MockMvc mockMvc;
 
@@ -40,8 +34,6 @@ public class SecurityConfigurationTest {
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
-        start = LocalDate.of(2019, 12, 12);
-        end = LocalDate.of(2019, 12, 22);
     }
 
     @Test
@@ -69,13 +61,5 @@ public class SecurityConfigurationTest {
     public void accessForAdminToAdminPage() throws Exception {
         mockMvc.perform(get("/admin/users"))
                 .andExpect(status().isOk());
-    }
-
-    @Test
-    public void accessForAnonymousToRentPageDenied() throws Exception {
-        mockMvc.perform(post("/hotels/1/rooms/rent/1")
-                .param("start", start.toString())
-                .param("end", end.toString()))
-                .andExpect(status().isForbidden());
     }
 }

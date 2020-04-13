@@ -1,20 +1,28 @@
 package com.qozz.worldwidehotelsystem.controller;
 
 import com.google.common.collect.ImmutableList;
+import com.qozz.worldwidehotelsystem.data.dto.RentRoomDto;
 import com.qozz.worldwidehotelsystem.data.entity.Hotel;
 import com.qozz.worldwidehotelsystem.data.entity.Room;
 import com.qozz.worldwidehotelsystem.data.entity.Schedule;
 import com.qozz.worldwidehotelsystem.data.entity.User;
+import com.qozz.worldwidehotelsystem.data.mapping.RoomMapper;
 import com.qozz.worldwidehotelsystem.service.RoomService;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -31,11 +39,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class RoomControllerTest {
 
     private static final String ROOMS_ENDPOINT = "/hotels/1/rooms/";
-    private static final String RENT_ROOM_ENDPOINT = ROOMS_ENDPOINT + "/rent/1";
+    private static final String RENT_ROOM_ENDPOINT = ROOMS_ENDPOINT + "/rent/";
 
     private static final Long ROOM_ID = 1L;
+    private static final int ROOM_PRICE = 100;
     private static final int ROOM_FLOOR = 1;
     private static final int ROOM_NUMBER = 101;
+    private static final boolean ROOM_IS_AVAILABLE = true;
     private static final int EXPECTED_ROOM_ID = 1;
 
     private static final String HOTEL_NAME = "HotelOne";
@@ -55,13 +65,15 @@ public class RoomControllerTest {
     private static final String USER_PASSWORD = "password";
     private static final int EXPECTED_USER_ID = 1;
 
-    private User user;
     private Hotel hotel;
+    private User user;
     private Room room;
     private List<Room> rooms;
     private LocalDate start;
     private LocalDate end;
     private Schedule schedule;
+    private RentRoomDto rentRoomDto;
+    private String jsonRentRoomDto;
 
     @InjectMocks
     private RoomController controller;
@@ -69,18 +81,23 @@ public class RoomControllerTest {
     @Mock
     private RoomService roomService;
 
+    @Spy
+    private RoomMapper roomMapper = Mappers.getMapper(RoomMapper.class);
+
     private MockMvc mockMvc;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-        user = initUser();
         hotel = initHotel();
+        user = initUser();
         room = initRoom();
         rooms = initRooms();
         start = LocalDate.of(2020, 1, 1);
         end = LocalDate.of(2020, 12, 12);
         schedule = initSchedule();
+        rentRoomDto = initRentRoomDto();
+        jsonRentRoomDto = readJsonWithFile("json/RentRoomDtoJSON.json");
     }
 
     @Test
@@ -128,23 +145,21 @@ public class RoomControllerTest {
 
     @Test
     public void rentRoom() throws Exception {
-        when(roomService.rentRoom(ROOM_ID, start, end, null)).thenReturn(schedule);
+        when(roomService.rentRoom(rentRoomDto, null)).thenReturn(schedule);
 
-        mockMvc.perform(post(RENT_ROOM_ENDPOINT).contentType(APPLICATION_JSON)
-                .param("start", start.toString())
-                .param("end", end.toString()))
+        mockMvc.perform(post(RENT_ROOM_ENDPOINT).contentType(APPLICATION_JSON).content(jsonRentRoomDto))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(EXPECTED_SCHEDULE_ID)))
-                .andExpect(jsonPath("$.registerStart[0]", is(start.getYear())))
-                .andExpect(jsonPath("$.registerStart[1]", is(start.getMonthValue())))
-                .andExpect(jsonPath("$.registerStart[2]", is(start.getDayOfMonth())))
-                .andExpect(jsonPath("$.registerEnd[0]", is(end.getYear())))
-                .andExpect(jsonPath("$.registerEnd[1]", is(end.getMonthValue())))
-                .andExpect(jsonPath("$.registerEnd[2]", is(end.getDayOfMonth())))
-                .andExpect(jsonPath("$.user.id", is(EXPECTED_USER_ID)))
-                .andExpect(jsonPath("$.room.id", is(EXPECTED_ROOM_ID)));
+                .andExpect(jsonPath("$.hotelName", is(HOTEL_NAME)))
+                .andExpect(jsonPath("$.floor", is(ROOM_FLOOR)))
+                .andExpect(jsonPath("$.number", is(ROOM_NUMBER)))
+                .andExpect(jsonPath("$.price", is(ROOM_PRICE)))
+                .andExpect(jsonPath("$.country", is(HOTEL_COUNTRY)))
+                .andExpect(jsonPath("$.city", is(HOTEL_CITY)))
+                .andExpect(jsonPath("$.street", is(HOTEL_STREET)))
+                .andExpect(jsonPath("$.streetNumber", is(HOTEL_STREET_NUMBER)));
 
-        verify(roomService).rentRoom(ROOM_ID, start, end, null);
+        verify(roomService).rentRoom(rentRoomDto, null);
+        verify(roomMapper).scheduleToRoomInfoDto(schedule);
     }
 
     private User initUser() {
@@ -157,8 +172,10 @@ public class RoomControllerTest {
     private Room initRoom() {
         return new Room()
                 .setId(ROOM_ID)
+                .setPrice(ROOM_PRICE)
                 .setFloor(ROOM_FLOOR)
                 .setNumber(ROOM_NUMBER)
+                .setAvailable(ROOM_IS_AVAILABLE)
                 .setHotel(hotel);
     }
 
@@ -166,8 +183,10 @@ public class RoomControllerTest {
         return ImmutableList.of(
                 new Room()
                         .setId(ROOM_ID)
+                        .setPrice(ROOM_PRICE)
                         .setFloor(ROOM_FLOOR)
                         .setNumber(ROOM_NUMBER)
+                        .setAvailable(ROOM_IS_AVAILABLE)
                         .setHotel(hotel));
     }
 
@@ -187,7 +206,20 @@ public class RoomControllerTest {
                 .setId(SCHEDULE_ID)
                 .setUser(user)
                 .setRoom(room)
-                .setRegisterStart(start)
-                .setRegisterEnd(end);
+                .setRentStart(start)
+                .setRentEnd(end);
+    }
+
+    private RentRoomDto initRentRoomDto() {
+        return new RentRoomDto()
+                .setId(ROOM_ID)
+                .setRentStart(start)
+                .setRentEnd(end);
+    }
+
+    private String readJsonWithFile(String jsonFile) throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(jsonFile);
+        assert inputStream != null;
+        return IOUtils.toString(inputStream, StandardCharsets.UTF_8.name());
     }
 }

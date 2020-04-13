@@ -2,7 +2,10 @@ package com.qozz.worldwidehotelsystem.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.qozz.worldwidehotelsystem.data.enumeration.Role;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -11,7 +14,10 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity(name = "usr")
-@Data
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 @Accessors(chain = true)
 public class User {
 

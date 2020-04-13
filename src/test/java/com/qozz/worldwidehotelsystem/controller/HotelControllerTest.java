@@ -59,7 +59,7 @@ public class HotelControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
         hotel = initHotel();
         hotelsInfo = initHotelsInfo();
-        jsonHotel = readJsonWithFile("HotelJSON.json");
+        jsonHotel = readJsonWithFile("json/HotelJSON.json");
     }
 
     @Test

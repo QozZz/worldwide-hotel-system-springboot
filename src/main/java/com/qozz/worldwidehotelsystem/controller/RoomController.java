@@ -1,7 +1,10 @@
 package com.qozz.worldwidehotelsystem.controller;
 
+import com.qozz.worldwidehotelsystem.data.dto.RentRoomDto;
+import com.qozz.worldwidehotelsystem.data.dto.RoomInfoDto;
 import com.qozz.worldwidehotelsystem.data.entity.Room;
 import com.qozz.worldwidehotelsystem.data.entity.Schedule;
+import com.qozz.worldwidehotelsystem.data.mapping.RoomMapper;
 import com.qozz.worldwidehotelsystem.service.RoomService;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,6 +21,7 @@ import java.util.List;
 public class RoomController {
 
     private final RoomService roomService;
+    private final RoomMapper roomMapper;
 
     @GetMapping(value = "/{roomId}")
     public Room getRoomById(@PathVariable Long roomId) {
@@ -27,20 +31,17 @@ public class RoomController {
     @GetMapping
     public List<Room> getFreeHotelRooms(@PathVariable Long hotelId,
                                         @RequestParam(value = "start")
-                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate rentStart,
                                         @RequestParam(value = "end")
-                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
-        return roomService.getFreeRoomsInHotel(hotelId, start, end);
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate rentEnd) {
+        return roomService.getFreeRoomsInHotel(hotelId, rentStart, rentEnd);
     }
 
-    @PostMapping(value = "/rent/{roomId}")
+    @PostMapping(value = "/rent")
     @PreAuthorize("isAuthenticated()")
-    public Schedule rentRoom(@PathVariable Long roomId,
-                             @RequestParam(value = "start")
-                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
-                             @RequestParam(value = "end")
-                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
-                             @AuthenticationPrincipal String username) {
-        return roomService.rentRoom(roomId, start, end, username);
+    public RoomInfoDto rentRoom(@RequestBody RentRoomDto rentRoomDto,
+                                @AuthenticationPrincipal String username) {
+        Schedule schedule = roomService.rentRoom(rentRoomDto, username);
+        return roomMapper.scheduleToRoomInfoDto(schedule);
     }
 }

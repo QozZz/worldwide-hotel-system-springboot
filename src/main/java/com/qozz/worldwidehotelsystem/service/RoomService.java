@@ -1,5 +1,6 @@
 package com.qozz.worldwidehotelsystem.service;
 
+import com.qozz.worldwidehotelsystem.data.dto.RentRoomDto;
 import com.qozz.worldwidehotelsystem.data.entity.Room;
 import com.qozz.worldwidehotelsystem.data.entity.Schedule;
 import com.qozz.worldwidehotelsystem.data.entity.User;
@@ -10,6 +11,8 @@ import com.qozz.worldwidehotelsystem.exception.RoomAlreadyRentedException;
 import com.qozz.worldwidehotelsystem.exception.RoomDoesNotExistException;
 import com.qozz.worldwidehotelsystem.exception.UserDoesNotExistException;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,35 +24,46 @@ import static com.qozz.worldwidehotelsystem.exception.ExceptionMessages.*;
 @AllArgsConstructor
 public class RoomService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomService.class);
+
     private final RoomRepository roomRepository;
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
 
     public Room getRoomById(Long roomId) {
+        LOGGER.debug("getRoomById(): roomId = {}", roomId);
         return roomRepository.findById(roomId)
                 .orElseThrow(() -> new RoomDoesNotExistException(ROOM_DOES_NOT_EXIST));
     }
 
-    public List<Room> getFreeRoomsInHotel(Long hotelId, LocalDate start, LocalDate end) {
-        return roomRepository.findAllFreeByHotelId(hotelId, start, end);
+    public List<Room> getFreeRoomsInHotel(Long hotelId, LocalDate rentStart, LocalDate rentEnd) {
+        LOGGER.debug("getFreeRoomsInHotel(): hotelId = {}, rentStart = {}, rentEnd = {}", hotelId, rentStart, rentEnd);
+        return roomRepository.findAllFreeByHotelId(hotelId, rentStart, rentEnd);
     }
 
-    public Schedule rentRoom(Long roomId, LocalDate start, LocalDate end, String username) {
-        if (roomRepository.findNumberOfRentedRooms(roomId, start, end) != 0) {
+    public Schedule rentRoom(RentRoomDto rentRoomDto, String username) {
+        LOGGER.debug("rentRoom(): rentRoomDto = {}, username = {}", rentRoomDto.toString(), username);
+        if (getNumberOfRentedRooms(rentRoomDto) != 0) {
             throw new RoomAlreadyRentedException(ROOM_IS_ALREADY_RENTED);
         }
 
         User user = userRepository.findUserByUsername(username)
                 .orElseThrow(() -> new UserDoesNotExistException(USER_DOES_NOT_EXIST));
-        Room room =  roomRepository.findById(roomId)
+        Room room =  roomRepository.findById(rentRoomDto.getId())
                 .orElseThrow(() -> new RoomDoesNotExistException(ROOM_DOES_NOT_EXIST));
 
         Schedule schedule = new Schedule()
                 .setRoom(room)
                 .setUser(user)
-                .setRegisterStart(start)
-                .setRegisterEnd(end);
+                .setRentStart(rentRoomDto.getRentStart())
+                .setRentEnd(rentRoomDto.getRentEnd());
 
         return scheduleRepository.saveAndFlush(schedule);
+    }
+
+    private int getNumberOfRentedRooms(RentRoomDto rentRoomDto) {
+        LOGGER.debug("getNumberOfRentedRooms(): rentRoomDto = {}", rentRoomDto.toString());
+        return roomRepository.findNumberOfRentedRooms(
+                rentRoomDto.getId(), rentRoomDto.getRentStart(), rentRoomDto.getRentEnd());
     }
 }

@@ -13,6 +13,8 @@ import com.qozz.worldwidehotelsystem.exception.PasswordsAreNotEqualsException;
 import com.qozz.worldwidehotelsystem.exception.UserAlreadyExistException;
 import com.qozz.worldwidehotelsystem.exception.UserDoesNotExistException;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,6 +36,8 @@ import static com.qozz.worldwidehotelsystem.exception.ExceptionMessages.*;
 @AllArgsConstructor
 public class UserService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
@@ -42,6 +46,7 @@ public class UserService {
 
     @Transactional
     public String createUserToken(LoginDto loginDto) {
+        LOGGER.debug("createUserToken(): loginDto = {}", loginDto.toString());
         String username = loginDto.getUsername();
         if (userRepository.findUserByUsername(username).isPresent()) {
             try {
@@ -55,6 +60,7 @@ public class UserService {
     }
 
     private String getAuthenticationToken(LoginDto loginDto) {
+        LOGGER.debug("getAuthenticationToken(): loginDto = {}", loginDto.toString());
         String username = loginDto.getUsername();
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, loginDto.getPassword()));
@@ -64,16 +70,19 @@ public class UserService {
     }
 
     public User getUserById(Long userId) {
+        LOGGER.debug("getUserById(): userId = {}", userId);
         return userRepository.findById(userId).orElseThrow(
                 () -> new UserDoesNotExistException(USER_DOES_NOT_EXIST));
     }
 
     public List<UserInfoDto> getUserInfoList() {
+        LOGGER.debug("getUserInfoList()");
         List<User> users = userRepository.findAll();
         return userMapper.userListToUserIntoDtoList(users);
     }
 
     public User createUser(SignUpDto signUpDto) {
+        LOGGER.debug("createUser(): signUpDto = {}", signUpDto.toString());
         if (!signUpDto.getPassword().equals(signUpDto.getRepeatPassword())) {
             throw new PasswordsAreNotEqualsException(PASSWORDS_ARE_NOT_EQUALS, signUpDto);
         }
@@ -93,6 +102,7 @@ public class UserService {
     }
 
     public User changeUser(User newUser, Long userId) {
+        LOGGER.debug("changeUser(): newUser = {}, userId = {}", newUser, userId);
         return userRepository.findById(userId)
                 .map(user -> {
                     user.setUsername(newUser.getUsername());
@@ -103,6 +113,7 @@ public class UserService {
     }
 
     public void deleteUserById(Long userId) {
+        LOGGER.debug("deleteUserById(): userId = {}", userId);
         userRepository.deleteById(userId);
     }
 }

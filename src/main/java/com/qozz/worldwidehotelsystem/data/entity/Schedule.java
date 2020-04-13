@@ -1,13 +1,19 @@
 package com.qozz.worldwidehotelsystem.data.entity;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 @Accessors(chain = true)
 public class Schedule {
 
@@ -24,8 +30,8 @@ public class Schedule {
     private User user;
 
     @Column(nullable = false)
-    private LocalDate registerStart;
+    private LocalDate rentStart;
 
     @Column(nullable = false)
-    private LocalDate registerEnd;
+    private LocalDate rentEnd;
 }

@@ -1,7 +1,10 @@
 package com.qozz.worldwidehotelsystem.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -10,7 +13,10 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 @Accessors(chain = true)
 public class Room {
 
@@ -23,6 +29,12 @@ public class Room {
 
     @Column(nullable = false)
     private int number;
+
+    @Column(nullable = false)
+    private int price;
+
+    @Column(nullable = false)
+    private boolean isAvailable;
 
     @ManyToOne
     @JoinColumn(name = "hotel_id", nullable = false)
