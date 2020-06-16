@@ -1,5 +1,5 @@
 {
-  "username": "admin",
-  "password": "password",
-  "repeatPassword": "password"
+  "username": "test@test.com",
+  "password": "test",
+  "repeatPassword": "test"
 }

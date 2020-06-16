@@ -82,9 +82,9 @@ public class SignUpControllerTest {
 
     private SignUpDto initSignUpDto() {
         return new SignUpDto()
-                .setUsername("admin")
-                .setPassword("password")
-                .setRepeatPassword("password");
+                .setUsername("test@test.com")
+                .setPassword("test")
+                .setRepeatPassword("test");
     }
 
     private String readJsonWithFile(String jsonFile) throws IOException {
