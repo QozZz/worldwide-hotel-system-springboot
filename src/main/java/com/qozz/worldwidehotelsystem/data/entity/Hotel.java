@@ -41,9 +41,4 @@ public class Hotel {
 
     @Column(nullable = false, length = 10)
     private String number;
-
-    @OneToMany(mappedBy = "hotel")
-    @JsonIgnore
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<Room> rooms;
 }

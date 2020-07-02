@@ -39,9 +39,4 @@ public class Room {
     @ManyToOne
     @JoinColumn(name = "hotel_id", nullable = false)
     private Hotel hotel;
-
-    @OneToMany(mappedBy = "room")
-    @JsonIgnore
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<Schedule> schedules;
 }

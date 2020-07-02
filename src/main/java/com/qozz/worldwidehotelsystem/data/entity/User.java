@@ -35,9 +35,4 @@ public class User {
     @CollectionTable(name = "usr_role", joinColumns = @JoinColumn(name = "id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
-
-    @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<Schedule> schedules;
 }
