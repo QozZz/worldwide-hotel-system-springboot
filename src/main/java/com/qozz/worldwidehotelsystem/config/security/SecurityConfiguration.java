@@ -34,17 +34,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                // TODO: 02.07.2020 enable when finish code refactor 
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                    .and()
-//                .authorizeRequests()
-//                .antMatchers("/", "/home", "/login").permitAll()
-//                .antMatchers("/admin/**").hasRole(Role.ADMIN.name())
-//                    .and()
-//                .addFilterBefore(new JwtFilter(provider), UsernamePasswordAuthenticationFilter.class)
-//                .cors();
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
                 .authorizeRequests()
-                .anyRequest().permitAll();
+                .antMatchers("/", "/home", "/login").permitAll()
+                .antMatchers("/admin/**").hasRole(Role.ADMIN.name())
+                    .and()
+                .addFilterBefore(new JwtFilter(provider), UsernamePasswordAuthenticationFilter.class)
+                .cors();
     }
 
     @Bean
