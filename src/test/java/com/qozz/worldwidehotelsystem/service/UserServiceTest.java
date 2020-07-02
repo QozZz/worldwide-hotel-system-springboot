@@ -49,6 +49,7 @@ public class UserServiceTest {
     private SignUpDto signUpDto;
     private LoginDto loginDto;
     private User user;
+    private UserInfoDto userInfoDto;
     private List<User> users;
     private List<UserInfoDto> userInfoDtoList;
 
@@ -79,6 +80,7 @@ public class UserServiceTest {
         loginDto = initLoginDTO();
         user = initUser();
         users = initUserList();
+        userInfoDto = initUserInfoDto();
         userInfoDtoList = initUserInfoList();
     }
 
@@ -129,7 +131,7 @@ public class UserServiceTest {
     public void changeUserWhenUserDoesNotExist() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        userService.changeUser(user, 1L);
+        userService.changeUser(userInfoDto, 1L);
 
         verify(userRepository).findById(1L);
     }
@@ -140,13 +142,14 @@ public class UserServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.saveAndFlush(any(User.class))).thenReturn(newUser);
 
-        User savedUser = userService.changeUser(newUser, 1L);
+        UserInfoDto newUserInfoDto = userMapper.userToUserInfoDto(newUser);
+        UserInfoDto savedUser = userService.changeUser(newUserInfoDto, 1L);
 
         verify(userRepository).findById(1L);
         verify(userRepository).saveAndFlush(any(User.class));
 
         assertNotNull(savedUser);
-        assertEquals(newUser, savedUser);
+        assertEquals(newUserInfoDto, savedUser);
     }
 
     @Test
@@ -239,7 +242,7 @@ public class UserServiceTest {
         when(passwordEncoder.encode(anyString())).thenReturn(PASSWORD);
         when(userRepository.saveAndFlush(any(User.class))).thenReturn(userToSave);
 
-        User savedUser = userService.createUser(signUpDto);
+        UserInfoDto savedUser = userService.createUser(signUpDto);
 
         verify(userRepository).findUserByUsername(signUpDto.getUsername());
         verify(passwordEncoder).encode(signUpDto.getPassword());
@@ -250,6 +253,14 @@ public class UserServiceTest {
 
     private User initUser() {
         return new User()
+                .setId(ID)
+                .setUsername(USER_NAME)
+                .setPassword(PASSWORD)
+                .setRoles(Collections.singleton(Role.ADMIN));
+    }
+
+    private UserInfoDto initUserInfoDto() {
+        return new UserInfoDto()
                 .setId(ID)
                 .setUsername(USER_NAME)
                 .setPassword(PASSWORD)
@@ -288,10 +299,12 @@ public class UserServiceTest {
                 new UserInfoDto()
                         .setId(1L)
                         .setUsername("userOne")
+                        .setPassword("passwordOne")
                         .setRoles(Collections.singleton(Role.ADMIN)),
                 new UserInfoDto()
                         .setId(2L)
                         .setUsername("userTwo")
+                        .setPassword("passwordTwo")
                         .setRoles(Collections.singleton(Role.USER)));
     }
 }

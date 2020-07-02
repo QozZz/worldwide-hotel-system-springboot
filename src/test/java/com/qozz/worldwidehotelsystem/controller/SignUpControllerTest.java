@@ -1,7 +1,7 @@
 package com.qozz.worldwidehotelsystem.controller;
 
 import com.qozz.worldwidehotelsystem.data.dto.SignUpDto;
-import com.qozz.worldwidehotelsystem.data.entity.User;
+import com.qozz.worldwidehotelsystem.data.dto.UserInfoDto;
 import com.qozz.worldwidehotelsystem.data.enumeration.Role;
 import com.qozz.worldwidehotelsystem.service.UserService;
 import org.apache.commons.io.IOUtils;
@@ -40,7 +40,7 @@ public class SignUpControllerTest {
 
     private String jsonSignUp;
     private SignUpDto signUpDto;
-    private User user;
+    private UserInfoDto userInfoDto;
 
     @InjectMocks
     private SignUpController controller;
@@ -55,12 +55,12 @@ public class SignUpControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
         jsonSignUp = readJsonWithFile("json/SignUpJSON.json");
         signUpDto = initSignUpDto();
-        user = initUser();
+        userInfoDto = initUserInfoDto();
     }
 
     @Test
     public void SignUpUser() throws Exception {
-        when(userService.createUser(signUpDto)).thenReturn(user);
+        when(userService.createUser(signUpDto)).thenReturn(userInfoDto);
 
         mockMvc.perform(post(SIGN_UP_ENDPOINT).contentType(APPLICATION_JSON).content(jsonSignUp))
                 .andExpect(status().isOk())
@@ -72,8 +72,8 @@ public class SignUpControllerTest {
         verify(userService).createUser(signUpDto);
     }
 
-    private User initUser() {
-        return new User()
+    private UserInfoDto initUserInfoDto() {
+        return new UserInfoDto()
                 .setId(USER_ID)
                 .setUsername(USER_NAME)
                 .setPassword(USER_PASSWORD)

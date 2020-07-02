@@ -1,6 +1,7 @@
 package com.qozz.worldwidehotelsystem.controller;
 
 import com.qozz.worldwidehotelsystem.data.dto.SignUpDto;
+import com.qozz.worldwidehotelsystem.data.dto.UserInfoDto;
 import com.qozz.worldwidehotelsystem.data.entity.User;
 import com.qozz.worldwidehotelsystem.service.UserService;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ public class SignUpController {
     private final UserService userService;
 
     @PostMapping
-    public User signUp(@Valid @RequestBody SignUpDto signUpDto) {
+    public UserInfoDto signUp(@Valid @RequestBody SignUpDto signUpDto) {
         return userService.createUser(signUpDto);
     }
 }

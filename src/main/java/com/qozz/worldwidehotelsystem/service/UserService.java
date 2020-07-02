@@ -69,10 +69,11 @@ public class UserService {
         return jwtProvider.createToken(username, roles);
     }
 
-    public User getUserById(Long userId) {
+    public UserInfoDto getUserById(Long userId) {
         LOGGER.debug("getUserById(): userId = {}", userId);
-        return userRepository.findById(userId).orElseThrow(
-                () -> new UserDoesNotExistException(USER_DOES_NOT_EXIST));
+        return userRepository.findById(userId)
+                .map(userMapper::userToUserInfoDto)
+                .orElseThrow(() -> new UserDoesNotExistException(USER_DOES_NOT_EXIST));
     }
 
     public List<UserInfoDto> getUserInfoList() {
@@ -81,7 +82,7 @@ public class UserService {
         return userMapper.userListToUserIntoDtoList(users);
     }
 
-    public User createUser(SignUpDto signUpDto) {
+    public UserInfoDto createUser(SignUpDto signUpDto) {
         LOGGER.debug("createUser(): signUpDto = {}", signUpDto.toString());
         if (!signUpDto.getPassword().equals(signUpDto.getRepeatPassword())) {
             throw new PasswordsAreNotEqualsException(PASSWORDS_ARE_NOT_EQUALS, signUpDto);
@@ -98,16 +99,19 @@ public class UserService {
                 .setPassword(passwordEncoder.encode(signUpDto.getPassword()))
                 .setRoles(Collections.singleton(Role.USER));
 
-        return userRepository.saveAndFlush(user);
+        User saveUser = userRepository.saveAndFlush(user);
+
+        return userMapper.userToUserInfoDto(saveUser);
     }
 
-    public User changeUser(User newUser, Long userId) {
+    public UserInfoDto changeUser(UserInfoDto newUser, Long userId) {
         LOGGER.debug("changeUser(): newUser = {}, userId = {}", newUser, userId);
         return userRepository.findById(userId)
                 .map(user -> {
                     user.setUsername(newUser.getUsername());
                     user.setPassword(newUser.getPassword());
-                    return userRepository.saveAndFlush(user);
+                    User saveUser = userRepository.saveAndFlush(user);
+                    return userMapper.userToUserInfoDto(saveUser);
                 })
                 .orElseThrow(() -> new UserDoesNotExistException(USER_DOES_NOT_EXIST));
     }

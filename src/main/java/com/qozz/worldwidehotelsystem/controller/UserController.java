@@ -22,17 +22,17 @@ public class UserController {
     }
 
     @GetMapping(value = "/{userId}")
-    public User getUserById(@PathVariable Long userId) {
+    public UserInfoDto getUserById(@PathVariable Long userId) {
         return userService.getUserById(userId);
     }
 
     @PostMapping
-    public User createUser(@RequestBody SignUpDto signUpDto) {
+    public UserInfoDto createUser(@RequestBody SignUpDto signUpDto) {
         return userService.createUser(signUpDto);
     }
 
     @PutMapping(value = "/{userId}")
-    public User changeUser(@RequestBody User newUser, @PathVariable Long userId) {
+    public UserInfoDto changeUser(@RequestBody UserInfoDto newUser, @PathVariable Long userId) {
         return userService.changeUser(newUser, userId);
     }
 

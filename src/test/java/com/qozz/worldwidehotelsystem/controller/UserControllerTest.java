@@ -42,7 +42,7 @@ public class UserControllerTest {
 
     private String jsonSignUp;
     private String jsonUser;
-    private User user;
+    private UserInfoDto userInfoDto;
     private List<User> users;
     private List<UserInfoDto> usersInfo;
     private SignUpDto signUpDto;
@@ -58,7 +58,7 @@ public class UserControllerTest {
     @Before
     public void setUp() throws IOException {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-        user = initUser();
+        userInfoDto = initUserInfoDto();
         users = initUsers();
         usersInfo = initUsersInfo();
         jsonSignUp = readJsonWithFile("json/SignUpJSON.json");
@@ -81,7 +81,7 @@ public class UserControllerTest {
 
     @Test
     public void getUserById() throws Exception {
-        when(userService.getUserById(USER_ID)).thenReturn(user);
+        when(userService.getUserById(USER_ID)).thenReturn(userInfoDto);
 
         mockMvc.perform(get(USERS_ENDPOINT + USER_ID).contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -95,7 +95,7 @@ public class UserControllerTest {
 
     @Test
     public void createUser() throws Exception {
-        when(userService.createUser(signUpDto)).thenReturn(user);
+        when(userService.createUser(signUpDto)).thenReturn(userInfoDto);
 
         mockMvc.perform(post(USERS_ENDPOINT).contentType(APPLICATION_JSON).content(jsonSignUp))
                 .andExpect(status().isOk())
@@ -109,7 +109,7 @@ public class UserControllerTest {
 
     @Test
     public void changeUser() throws Exception {
-        when(userService.changeUser(user, USER_ID)).thenReturn(user);
+        when(userService.changeUser(userInfoDto, USER_ID)).thenReturn(userInfoDto);
 
         mockMvc.perform(put(USERS_ENDPOINT + USER_ID).contentType(APPLICATION_JSON).content(jsonUser))
                 .andExpect(status().isOk())
@@ -118,7 +118,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.password", is(USER_PASSWORD)))
                 .andExpect(jsonPath("$.roles[0]", is(USER_ROLE.name())));
 
-        verify(userService).changeUser(user, USER_ID);
+        verify(userService).changeUser(userInfoDto, USER_ID);
     }
 
     @Test
@@ -131,8 +131,8 @@ public class UserControllerTest {
         verify(userService).deleteUserById(USER_ID);
     }
 
-    private User initUser() {
-        return new User()
+    private UserInfoDto initUserInfoDto() {
+        return new UserInfoDto()
                 .setId(USER_ID)
                 .setUsername(USER_NAME)
                 .setPassword(USER_PASSWORD)
