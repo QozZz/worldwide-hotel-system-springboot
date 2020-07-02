@@ -109,7 +109,7 @@ public class UserService {
         return userRepository.findById(userId)
                 .map(user -> {
                     user.setUsername(newUser.getUsername());
-                    user.setPassword(newUser.getPassword());
+                    user.setPassword(passwordEncoder.encode(newUser.getPassword()));
                     User saveUser = userRepository.saveAndFlush(user);
                     return userMapper.userToUserInfoDto(saveUser);
                 })
