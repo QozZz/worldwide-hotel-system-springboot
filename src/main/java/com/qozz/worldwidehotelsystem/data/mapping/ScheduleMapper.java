@@ -1,6 +1,6 @@
 package com.qozz.worldwidehotelsystem.data.mapping;
 
-import com.qozz.worldwidehotelsystem.data.dto.RoomInfoDto;
+import com.qozz.worldwidehotelsystem.data.dto.RentedRoomInfoDto;
 import com.qozz.worldwidehotelsystem.data.entity.Schedule;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring")
 @Component
-public interface RoomScheduleMapper {
+public interface ScheduleMapper {
     @Mappings({
             @Mapping(source = "room.hotel.name", target = "hotelName"),
             @Mapping(source = "room.floor", target = "floor"),
@@ -19,6 +19,8 @@ public interface RoomScheduleMapper {
             @Mapping(source = "room.hotel.city", target = "city"),
             @Mapping(source = "room.hotel.street", target = "street"),
             @Mapping(source = "room.hotel.number", target = "streetNumber"),
+            @Mapping(source = "rentStart", target = "rentStart"),
+            @Mapping(source = "rentEnd", target = "rentEnd"),
     })
-    RoomInfoDto scheduleToRoomInfoDto(Schedule schedule);
+    RentedRoomInfoDto scheduleToRentInfoDto(Schedule schedule);
 }

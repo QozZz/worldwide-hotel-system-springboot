@@ -7,7 +7,7 @@ import com.qozz.worldwidehotelsystem.data.entity.Hotel;
 import com.qozz.worldwidehotelsystem.data.entity.Room;
 import com.qozz.worldwidehotelsystem.data.entity.Schedule;
 import com.qozz.worldwidehotelsystem.data.entity.User;
-import com.qozz.worldwidehotelsystem.data.mapping.RoomScheduleMapper;
+import com.qozz.worldwidehotelsystem.data.mapping.ScheduleMapper;
 import com.qozz.worldwidehotelsystem.service.RoomService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -84,7 +84,7 @@ public class RoomControllerTest {
     private RoomService roomService;
 
     @Spy
-    private RoomScheduleMapper roomScheduleMapper = Mappers.getMapper(RoomScheduleMapper.class);
+    private ScheduleMapper scheduleMapper = Mappers.getMapper(ScheduleMapper.class);
 
     private MockMvc mockMvc;
 
@@ -161,7 +161,7 @@ public class RoomControllerTest {
                 .andExpect(jsonPath("$.streetNumber", is(HOTEL_STREET_NUMBER)));
 
         verify(roomService).rentRoom(rentRoomDto, null);
-        verify(roomScheduleMapper).scheduleToRoomInfoDto(schedule);
+        verify(scheduleMapper).scheduleToRentInfoDto(schedule);
     }
 
     private User initUser() {
