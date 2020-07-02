@@ -98,11 +98,7 @@ public class UserControllerTest {
         when(userService.createUser(signUpDto)).thenReturn(userInfoDto);
 
         mockMvc.perform(post(USERS_ENDPOINT).contentType(APPLICATION_JSON).content(jsonSignUp))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(EXPECTED_USER_ID)))
-                .andExpect(jsonPath("$.username", is(USER_NAME)))
-                .andExpect(jsonPath("$.password", is(USER_PASSWORD)))
-                .andExpect(jsonPath("$.roles[0]", is(USER_ROLE.name())));
+                .andExpect(status().isOk());
 
         verify(userService).createUser(signUpDto);
     }
@@ -158,9 +154,9 @@ public class UserControllerTest {
 
     private SignUpDto initSignUpDto() {
         return new SignUpDto()
-                .setUsername("admin")
-                .setPassword("password")
-                .setRepeatPassword("password");
+                .setUsername("test@test.com")
+                .setPassword("test")
+                .setRepeatPassword("test");
     }
 
     private String readJsonWithFile(String jsonFile) throws IOException {

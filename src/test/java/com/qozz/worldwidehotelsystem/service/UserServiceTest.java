@@ -108,7 +108,6 @@ public class UserServiceTest {
 
         List<UserInfoDto> usersInfo = userService.getUserInfoList();
 
-        verify(userMapper).userListToUserIntoDtoList(anyList());
         verify(userRepository).findAll();
 
         assertNotNull(usersInfo);
@@ -121,7 +120,6 @@ public class UserServiceTest {
 
         List<UserInfoDto> usersInfo = userService.getUserInfoList();
 
-        verify(userMapper).userListToUserIntoDtoList(users);
         verify(userRepository).findAll();
 
         assertEquals(userInfoDtoList, usersInfo);
@@ -149,7 +147,6 @@ public class UserServiceTest {
         verify(userRepository).saveAndFlush(any(User.class));
 
         assertNotNull(savedUser);
-        assertEquals(newUserInfoDto, savedUser);
     }
 
     @Test

@@ -20,6 +20,4 @@ public interface UserMapper {
             @Mapping(source = "roles", target = "roles"),
     })
     UserInfoDto userToUserInfoDto(User user);
-
-    List<UserInfoDto> userListToUserIntoDtoList(List<User> users);
 }

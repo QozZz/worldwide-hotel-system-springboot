@@ -79,7 +79,9 @@ public class UserService {
     public List<UserInfoDto> getUserInfoList() {
         LOGGER.debug("getUserInfoList()");
         List<User> users = userRepository.findAll();
-        return userMapper.userListToUserIntoDtoList(users);
+        return users.stream()
+                .map(userMapper::userToUserInfoDto)
+                .collect(Collectors.toList());
     }
 
     public UserInfoDto createUser(SignUpDto signUpDto) {
