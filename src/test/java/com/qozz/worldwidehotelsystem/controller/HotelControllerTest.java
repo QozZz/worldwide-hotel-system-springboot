@@ -44,6 +44,7 @@ public class HotelControllerTest {
 
     private String jsonHotel;
     private Hotel hotel;
+    private HotelInfoDto hotelInfoDto;
     private List<HotelInfoDto> hotelsInfo;
 
     @InjectMocks
@@ -58,13 +59,14 @@ public class HotelControllerTest {
     public void setUp() throws IOException {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
         hotel = initHotel();
+        hotelInfoDto = initHotelInfoDto();
         hotelsInfo = initHotelsInfo();
         jsonHotel = readJsonWithFile("json/HotelJSON.json");
     }
 
     @Test
     public void getHotelById() throws Exception {
-        when(hotelService.getHotelById(HOTEL_ID)).thenReturn(hotel);
+        when(hotelService.getHotelById(HOTEL_ID)).thenReturn(hotelInfoDto);
 
         mockMvc.perform(get(HOTELS_ENDPOINT + HOTEL_ID).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -98,7 +100,7 @@ public class HotelControllerTest {
 
     @Test
     public void createHotel() throws Exception {
-        when(hotelService.createHotel(hotel)).thenReturn(hotel);
+        when(hotelService.createHotel(hotel)).thenReturn(hotelInfoDto);
 
         mockMvc.perform(post(HOTELS_ENDPOINT).contentType(MediaType.APPLICATION_JSON).content(jsonHotel))
                 .andExpect(status().isOk())
@@ -115,7 +117,7 @@ public class HotelControllerTest {
 
     @Test
     public void changeHotel() throws Exception {
-        when(hotelService.changeHotel(hotel, HOTEL_ID)).thenReturn(hotel);
+        when(hotelService.changeHotel(hotel, HOTEL_ID)).thenReturn(hotelInfoDto);
 
         mockMvc.perform(put(HOTELS_ENDPOINT + HOTEL_ID).contentType(MediaType.APPLICATION_JSON).content(jsonHotel))
                 .andExpect(status().isOk())
@@ -142,6 +144,17 @@ public class HotelControllerTest {
 
     private Hotel initHotel() {
         return new Hotel()
+                .setId(HOTEL_ID)
+                .setName(HOTEL_NAME)
+                .setStars(HOTEL_STARS)
+                .setCountry(HOTEL_COUNTRY)
+                .setCity(HOTEL_CITY)
+                .setStreet(HOTEL_STREET)
+                .setNumber(HOTEL_STREET_NUMBER);
+    }
+
+    private HotelInfoDto initHotelInfoDto() {
+        return new HotelInfoDto()
                 .setId(HOTEL_ID)
                 .setName(HOTEL_NAME)
                 .setStars(HOTEL_STARS)

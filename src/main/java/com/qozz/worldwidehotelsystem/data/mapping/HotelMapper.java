@@ -22,7 +22,5 @@ public interface HotelMapper {
             @Mapping(source = "street", target = "street"),
             @Mapping(source = "number", target = "number"),
     })
-    HotelInfoDto hotelToHotelAddressDto(Hotel hotel);
-
-    List<HotelInfoDto> hotelsToHotelInfoDtoList(List<Hotel> hotels);
+    HotelInfoDto hotelToHotelInfoDto(Hotel hotel);
 }

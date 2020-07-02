@@ -29,8 +29,9 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class HotelServiceTest {
 
-    private List<Hotel> hotels;
     private Hotel hotel;
+    private List<Hotel> hotelList;
+    private List<HotelInfoDto> hotelInfoDtoList;
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
@@ -46,8 +47,9 @@ public class HotelServiceTest {
 
     @Before
     public void setUp() {
-        hotels = initHotelInfoDtoList();
         hotel = initHotel();
+        hotelList = initHotelList();
+        hotelInfoDtoList = initHotelInfoDtoList();
     }
 
     @Test
@@ -72,15 +74,13 @@ public class HotelServiceTest {
     @Test
     public void getHotelsInfoWhenHotelsExist() {
         when(hotelRepository.findAllHotelsByCountryAndCity(anyString(), anyString()))
-                .thenReturn(hotels);
+                .thenReturn(hotelList);
 
         List<HotelInfoDto> hotelInfoDtoList = hotelService.getHotelsInfo(anyString(), anyString());
 
         verify(hotelRepository).findAllHotelsByCountryAndCity(anyString(), anyString());
-        verify(hotelMapper).hotelsToHotelInfoDtoList(hotels);
 
         assertFalse(hotelInfoDtoList.isEmpty());
-        assertEquals(hotelMapper.hotelsToHotelInfoDtoList(hotels), hotelInfoDtoList);
     }
 
     @Test
@@ -92,17 +92,15 @@ public class HotelServiceTest {
         List<HotelInfoDto> hotelInfoDtoList = hotelService.getHotelsInfo(anyString(), anyString());
 
         verify(hotelRepository).findAllHotelsByCountryAndCity(anyString(), anyString());
-        verify(hotelMapper).hotelsToHotelInfoDtoList(emptyHotelList);
 
         assertTrue(hotelInfoDtoList.isEmpty());
-        assertEquals(hotelMapper.hotelsToHotelInfoDtoList(emptyHotelList), hotelInfoDtoList);
     }
 
     @Test
     public void createHotel() {
         when(hotelRepository.saveAndFlush(any(Hotel.class))).thenReturn(hotel);
 
-        Hotel savedHotel = hotelService.createHotel(new Hotel());
+        HotelInfoDto savedHotel = hotelService.createHotel(new Hotel());
 
         verify(hotelRepository).saveAndFlush(any(Hotel.class));
 
@@ -114,7 +112,7 @@ public class HotelServiceTest {
         when(hotelRepository.findById(1L)).thenReturn(Optional.of(hotel));
         when(hotelRepository.saveAndFlush(any(Hotel.class))).thenReturn(hotel);
 
-        Hotel changedHotel = hotelService.changeHotel(new Hotel(), 1L);
+        HotelInfoDto changedHotel = hotelService.changeHotel(new Hotel(), 1L);
 
         verify(hotelRepository).findById(1L);
         verify(hotelRepository).saveAndFlush(any(Hotel.class));
@@ -153,7 +151,7 @@ public class HotelServiceTest {
         verifyNoMoreInteractions(hotelRepository);
     }
 
-    private List<Hotel> initHotelInfoDtoList() {
+    private List<Hotel> initHotelList() {
         return ImmutableList.of(
                 new Hotel()
                         .setId(1L)
@@ -164,6 +162,26 @@ public class HotelServiceTest {
                         .setStreet("StreetTwo")
                         .setNumber("1"),
                 new Hotel()
+                        .setId(1L)
+                        .setName("HotelTwo")
+                        .setStars(5)
+                        .setCountry("CountryTwo")
+                        .setCity("CityTwo")
+                        .setStreet("StreetTwo")
+                        .setNumber("2"));
+    }
+
+    private List<HotelInfoDto> initHotelInfoDtoList() {
+        return ImmutableList.of(
+                new HotelInfoDto()
+                        .setId(1L)
+                        .setName("HotelOne")
+                        .setStars(5)
+                        .setCountry("CountryTwo")
+                        .setCity("CityTwo")
+                        .setStreet("StreetTwo")
+                        .setNumber("1"),
+                new HotelInfoDto()
                         .setId(1L)
                         .setName("HotelTwo")
                         .setStars(5)

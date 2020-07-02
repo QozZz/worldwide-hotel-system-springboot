@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.qozz.worldwidehotelsystem.exception.ExceptionMessages.HOTEL_DOES_NOT_EXIST;
 
@@ -24,24 +25,28 @@ public class HotelService {
     private final HotelRepository hotelRepository;
     private final HotelMapper hotelMapper;
 
-    public Hotel getHotelById(Long hotelId) {
+    public HotelInfoDto getHotelById(Long hotelId) {
         LOGGER.debug("getHotelById(): hotelId = {}", hotelId);
         return hotelRepository.findById(hotelId)
+                .map(hotelMapper::hotelToHotelInfoDto)
                 .orElseThrow(() -> new HotelDoesNotExistException(HOTEL_DOES_NOT_EXIST));
     }
 
     public List<HotelInfoDto> getHotelsInfo(String country, String city) {
         LOGGER.debug("getHotelsInfo(): country = {}, city = {}", country, city);
         List<Hotel> hotels = hotelRepository.findAllHotelsByCountryAndCity(country, city);
-        return hotelMapper.hotelsToHotelInfoDtoList(hotels);
+        return hotels.stream()
+                .map(hotelMapper::hotelToHotelInfoDto)
+                .collect(Collectors.toList());
     }
 
-    public Hotel createHotel(Hotel hotel) {
+    public HotelInfoDto createHotel(Hotel hotel) {
         LOGGER.debug("createHotel(): hotel = {}", hotel.toString());
-        return hotelRepository.saveAndFlush(hotel);
+        Hotel saveHotel = hotelRepository.saveAndFlush(hotel);
+        return hotelMapper.hotelToHotelInfoDto(saveHotel);
     }
 
-    public Hotel changeHotel(Hotel newHotel, Long hotelId) {
+    public HotelInfoDto changeHotel(Hotel newHotel, Long hotelId) {
         LOGGER.debug("changeHotel(): newHotel = {}, hotelId = {}", newHotel.toString(), hotelId);
         return hotelRepository.findById(hotelId)
                 .map(hotel -> {
@@ -51,7 +56,8 @@ public class HotelService {
                     hotel.setCity(newHotel.getCity());
                     hotel.setStreet(newHotel.getStreet());
                     hotel.setNumber(newHotel.getNumber());
-                    return hotelRepository.saveAndFlush(hotel);
+                    Hotel saveHotel = hotelRepository.saveAndFlush(hotel);
+                    return hotelMapper.hotelToHotelInfoDto(saveHotel);
                 })
                 .orElseThrow(() -> new HotelDoesNotExistException(HOTEL_DOES_NOT_EXIST));
     }

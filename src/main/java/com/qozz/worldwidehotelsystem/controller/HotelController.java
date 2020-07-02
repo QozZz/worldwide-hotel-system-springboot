@@ -17,7 +17,7 @@ public class HotelController {
     private final HotelService hotelService;
 
     @GetMapping(value = "/{hotelId}")
-    public Hotel getHotelById(@PathVariable Long hotelId) {
+    public HotelInfoDto getHotelById(@PathVariable Long hotelId) {
         return hotelService.getHotelById(hotelId);
     }
 
@@ -29,13 +29,13 @@ public class HotelController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
-    public Hotel createHotel(@RequestBody Hotel hotel) {
+    public HotelInfoDto createHotel(@RequestBody Hotel hotel) {
         return hotelService.createHotel(hotel);
     }
 
     @PutMapping(value = "/{hotelId}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public Hotel changeHotel(@RequestBody Hotel hotel, @PathVariable Long hotelId) {
+    public HotelInfoDto changeHotel(@RequestBody Hotel hotel, @PathVariable Long hotelId) {
         return hotelService.changeHotel(hotel, hotelId);
     }
 
