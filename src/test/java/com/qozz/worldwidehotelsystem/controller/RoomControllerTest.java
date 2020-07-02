@@ -2,11 +2,12 @@ package com.qozz.worldwidehotelsystem.controller;
 
 import com.google.common.collect.ImmutableList;
 import com.qozz.worldwidehotelsystem.data.dto.RentRoomDto;
+import com.qozz.worldwidehotelsystem.data.dto.RoomInfoDto;
 import com.qozz.worldwidehotelsystem.data.entity.Hotel;
 import com.qozz.worldwidehotelsystem.data.entity.Room;
 import com.qozz.worldwidehotelsystem.data.entity.Schedule;
 import com.qozz.worldwidehotelsystem.data.entity.User;
-import com.qozz.worldwidehotelsystem.data.mapping.RoomMapper;
+import com.qozz.worldwidehotelsystem.data.mapping.RoomScheduleMapper;
 import com.qozz.worldwidehotelsystem.service.RoomService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -38,8 +39,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(MockitoJUnitRunner.class)
 public class RoomControllerTest {
 
-    private static final String ROOMS_ENDPOINT = "/hotels/1/rooms/";
-    private static final String RENT_ROOM_ENDPOINT = ROOMS_ENDPOINT + "/rent/";
+    private static final String ROOMS_ENDPOINT = "/rooms";
+    private static final String RENT_ROOM_ENDPOINT = ROOMS_ENDPOINT + "/rent";
 
     private static final Long ROOM_ID = 1L;
     private static final int ROOM_PRICE = 100;
@@ -69,6 +70,7 @@ public class RoomControllerTest {
     private User user;
     private Room room;
     private List<Room> rooms;
+    private List<RoomInfoDto> roomInfoDtoList;
     private LocalDate start;
     private LocalDate end;
     private Schedule schedule;
@@ -82,7 +84,7 @@ public class RoomControllerTest {
     private RoomService roomService;
 
     @Spy
-    private RoomMapper roomMapper = Mappers.getMapper(RoomMapper.class);
+    private RoomScheduleMapper roomScheduleMapper = Mappers.getMapper(RoomScheduleMapper.class);
 
     private MockMvc mockMvc;
 
@@ -93,6 +95,7 @@ public class RoomControllerTest {
         user = initUser();
         room = initRoom();
         rooms = initRooms();
+        roomInfoDtoList = initRoomInfoDtoList();
         start = LocalDate.of(2020, 1, 1);
         end = LocalDate.of(2020, 12, 12);
         schedule = initSchedule();
@@ -104,7 +107,7 @@ public class RoomControllerTest {
     public void getRoom() throws Exception {
         when(roomService.getRoomById(ROOM_ID)).thenReturn(room);
 
-        mockMvc.perform(get(ROOMS_ENDPOINT + ROOM_ID).contentType(APPLICATION_JSON))
+        mockMvc.perform(get(ROOMS_ENDPOINT + "/" + ROOM_ID).contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(EXPECTED_ROOM_ID)))
                 .andExpect(jsonPath("$.floor", is(ROOM_FLOOR)))
@@ -122,23 +125,22 @@ public class RoomControllerTest {
 
     @Test
     public void getFreeHotelRooms() throws Exception {
-        when(roomService.getFreeRoomsInHotel(HOTEL_ID, start, end)).thenReturn(rooms);
+        when(roomService.getFreeRoomsInHotel(HOTEL_ID, start, end)).thenReturn(roomInfoDtoList);
 
         mockMvc.perform(get(ROOMS_ENDPOINT)
                 .contentType(APPLICATION_JSON)
+                .param("hotelId", String.valueOf(HOTEL_ID))
                 .param("start", start.toString())
                 .param("end", end.toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(EXPECTED_ROOM_ID)))
+                .andExpect(jsonPath("$[0].hotelName", is(HOTEL_NAME)))
                 .andExpect(jsonPath("$[0].floor", is(ROOM_FLOOR)))
                 .andExpect(jsonPath("$[0].number", is(ROOM_NUMBER)))
-                .andExpect(jsonPath("$[0].hotel.id", is(EXPECTED_HOTEL_ID)))
-                .andExpect(jsonPath("$[0].hotel.name", is(HOTEL_NAME)))
-                .andExpect(jsonPath("$[0].hotel.stars", is(HOTEL_STARS)))
-                .andExpect(jsonPath("$[0].hotel.country", is(HOTEL_COUNTRY)))
-                .andExpect(jsonPath("$[0].hotel.city", is(HOTEL_CITY)))
-                .andExpect(jsonPath("$[0].hotel.street", is(HOTEL_STREET)))
-                .andExpect(jsonPath("$[0].hotel.number", is(HOTEL_STREET_NUMBER)));
+                .andExpect(jsonPath("$[0].price", is(ROOM_PRICE)))
+                .andExpect(jsonPath("$[0].country", is(HOTEL_COUNTRY)))
+                .andExpect(jsonPath("$[0].city", is(HOTEL_CITY)))
+                .andExpect(jsonPath("$[0].street", is(HOTEL_STREET)))
+                .andExpect(jsonPath("$[0].streetNumber", is(HOTEL_STREET_NUMBER)));
 
         verify(roomService).getFreeRoomsInHotel(HOTEL_ID, start, end);
     }
@@ -159,7 +161,7 @@ public class RoomControllerTest {
                 .andExpect(jsonPath("$.streetNumber", is(HOTEL_STREET_NUMBER)));
 
         verify(roomService).rentRoom(rentRoomDto, null);
-        verify(roomMapper).scheduleToRoomInfoDto(schedule);
+        verify(roomScheduleMapper).scheduleToRoomInfoDto(schedule);
     }
 
     private User initUser() {
@@ -188,6 +190,19 @@ public class RoomControllerTest {
                         .setNumber(ROOM_NUMBER)
                         .setAvailable(ROOM_IS_AVAILABLE)
                         .setHotel(hotel));
+    }
+
+    private List<RoomInfoDto> initRoomInfoDtoList() {
+        return ImmutableList.of(
+                new RoomInfoDto()
+                        .setHotelName(HOTEL_NAME)
+                        .setFloor(ROOM_FLOOR)
+                        .setNumber(ROOM_NUMBER)
+                        .setPrice(ROOM_PRICE)
+                        .setCountry(HOTEL_COUNTRY)
+                        .setCity(HOTEL_CITY)
+                        .setStreet(HOTEL_STREET)
+                        .setStreetNumber(HOTEL_STREET_NUMBER));
     }
 
     private Hotel initHotel() {

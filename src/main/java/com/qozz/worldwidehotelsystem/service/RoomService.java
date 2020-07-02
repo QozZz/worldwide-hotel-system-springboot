@@ -1,9 +1,11 @@
 package com.qozz.worldwidehotelsystem.service;
 
 import com.qozz.worldwidehotelsystem.data.dto.RentRoomDto;
+import com.qozz.worldwidehotelsystem.data.dto.RoomInfoDto;
 import com.qozz.worldwidehotelsystem.data.entity.Room;
 import com.qozz.worldwidehotelsystem.data.entity.Schedule;
 import com.qozz.worldwidehotelsystem.data.entity.User;
+import com.qozz.worldwidehotelsystem.data.mapping.RoomMapper;
 import com.qozz.worldwidehotelsystem.data.repository.RoomRepository;
 import com.qozz.worldwidehotelsystem.data.repository.ScheduleRepository;
 import com.qozz.worldwidehotelsystem.data.repository.UserRepository;
@@ -16,7 +18,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.qozz.worldwidehotelsystem.exception.ExceptionMessages.*;
 
@@ -29,6 +33,7 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final RoomMapper roomMapper;
 
     public Room getRoomById(Long roomId) {
         LOGGER.debug("getRoomById(): roomId = {}", roomId);
@@ -36,9 +41,12 @@ public class RoomService {
                 .orElseThrow(() -> new RoomDoesNotExistException(ROOM_DOES_NOT_EXIST));
     }
 
-    public List<Room> getFreeRoomsInHotel(Long hotelId, LocalDate rentStart, LocalDate rentEnd) {
+    public List<RoomInfoDto> getFreeRoomsInHotel(Long hotelId, LocalDate rentStart, LocalDate rentEnd) {
         LOGGER.debug("getFreeRoomsInHotel(): hotelId = {}, rentStart = {}, rentEnd = {}", hotelId, rentStart, rentEnd);
-        return roomRepository.findAllFreeByHotelId(hotelId, rentStart, rentEnd);
+        List<Room> allFreeRoomsByHotelId = roomRepository.findAllFreeByHotelId(hotelId, rentStart, rentEnd);
+        return allFreeRoomsByHotelId.stream()
+                .map(roomMapper::roomToRoomInfoDto)
+                .collect(Collectors.toList());
     }
 
     public Schedule rentRoom(RentRoomDto rentRoomDto, String username) {

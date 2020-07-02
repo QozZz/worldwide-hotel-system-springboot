@@ -4,7 +4,7 @@ import com.qozz.worldwidehotelsystem.data.dto.RentRoomDto;
 import com.qozz.worldwidehotelsystem.data.dto.RoomInfoDto;
 import com.qozz.worldwidehotelsystem.data.entity.Room;
 import com.qozz.worldwidehotelsystem.data.entity.Schedule;
-import com.qozz.worldwidehotelsystem.data.mapping.RoomMapper;
+import com.qozz.worldwidehotelsystem.data.mapping.RoomScheduleMapper;
 import com.qozz.worldwidehotelsystem.service.RoomService;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,12 +16,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/hotels/{hotelId}/rooms")
+@RequestMapping("/rooms")
 @AllArgsConstructor
 public class RoomController {
 
     private final RoomService roomService;
-    private final RoomMapper roomMapper;
+    private final RoomScheduleMapper roomScheduleMapper;
 
     @GetMapping(value = "/{roomId}")
     public Room getRoomById(@PathVariable Long roomId) {
@@ -29,7 +29,7 @@ public class RoomController {
     }
 
     @GetMapping
-    public List<Room> getFreeHotelRooms(@PathVariable Long hotelId,
+    public List<RoomInfoDto> getFreeHotelRooms(@RequestParam(value = "hotelId") Long hotelId,
                                         @RequestParam(value = "start")
                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate rentStart,
                                         @RequestParam(value = "end")
@@ -42,6 +42,6 @@ public class RoomController {
     public RoomInfoDto rentRoom(@RequestBody RentRoomDto rentRoomDto,
                                 @AuthenticationPrincipal String username) {
         Schedule schedule = roomService.rentRoom(rentRoomDto, username);
-        return roomMapper.scheduleToRoomInfoDto(schedule);
+        return roomScheduleMapper.scheduleToRoomInfoDto(schedule);
     }
 }

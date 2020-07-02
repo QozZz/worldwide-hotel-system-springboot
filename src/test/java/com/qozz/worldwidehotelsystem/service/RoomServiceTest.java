@@ -2,10 +2,12 @@ package com.qozz.worldwidehotelsystem.service;
 
 import com.google.common.collect.ImmutableList;
 import com.qozz.worldwidehotelsystem.data.dto.RentRoomDto;
+import com.qozz.worldwidehotelsystem.data.dto.RoomInfoDto;
 import com.qozz.worldwidehotelsystem.data.entity.Hotel;
 import com.qozz.worldwidehotelsystem.data.entity.Room;
 import com.qozz.worldwidehotelsystem.data.entity.Schedule;
 import com.qozz.worldwidehotelsystem.data.entity.User;
+import com.qozz.worldwidehotelsystem.data.mapping.RoomMapper;
 import com.qozz.worldwidehotelsystem.data.repository.RoomRepository;
 import com.qozz.worldwidehotelsystem.data.repository.ScheduleRepository;
 import com.qozz.worldwidehotelsystem.data.repository.UserRepository;
@@ -17,8 +19,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
@@ -44,12 +48,14 @@ public class RoomServiceTest {
     private static final long ROOM_ID = 1L;
     private static final int ROOM_FLOOR = 1;
     private static final int ROOM_NUMBER = 101;
+    private static final int ROOM_PRICE = 100;
 
     private static final long USER_ID = 1L;
     private static final String USER_NAME = "username";
 
     private Hotel hotel;
     private List<Room> freeRooms;
+    private List<RoomInfoDto> freeRoomInfoDtoList;
     private Room room;
     private LocalDate start;
     private LocalDate end;
@@ -72,10 +78,14 @@ public class RoomServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Spy
+    private RoomMapper roomMapper = Mappers.getMapper(RoomMapper.class);
+
     @Before
     public void setUp() {
         hotel = initHotel();
         freeRooms = initFreeRoomsList();
+        freeRoomInfoDtoList = initFreeRoomInfoDtoList();
         room = initRoom();
         start = LocalDate.of(2020, 1, 1);
         end = LocalDate.of(2020, 2, 1);
@@ -160,7 +170,7 @@ public class RoomServiceTest {
         expectedEx.expect(UserDoesNotExistException.class);
         expectedEx.expectMessage(USER_DOES_NOT_EXIST);
 
-        roomService.rentRoom(rentRoomDto,"username");
+        roomService.rentRoom(rentRoomDto, "username");
     }
 
     @Test
@@ -201,6 +211,19 @@ public class RoomServiceTest {
                         .setFloor(ROOM_FLOOR)
                         .setNumber(ROOM_NUMBER)
                         .setHotel(hotel));
+    }
+
+    private List<RoomInfoDto> initFreeRoomInfoDtoList() {
+        return ImmutableList.of(
+                new RoomInfoDto()
+                        .setHotelName(HOTEL_NAME)
+                        .setFloor(ROOM_FLOOR)
+                        .setNumber(ROOM_NUMBER)
+                        .setPrice(ROOM_PRICE)
+                        .setCountry(HOTEL_COUNTRY)
+                        .setCity(HOTEL_CITY)
+                        .setStreet(HOTEL_STREET)
+                        .setStreetNumber(HOTEL_STREET_NUMBER));
     }
 
     private User initUser() {
