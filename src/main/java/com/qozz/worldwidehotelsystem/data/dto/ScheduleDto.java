@@ -3,6 +3,8 @@ package com.qozz.worldwidehotelsystem.data.dto;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -11,9 +13,12 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode
 @Accessors(chain = true)
 @Builder
-public class LoginDto {
+public class ScheduleDto {
 
-    private String email;
-    private String password;
+    private long id;
+    private RoomDto roomDto;
+    private String userEmail;
+    private LocalDate rentStart;
+    private LocalDate rentEnd;
 
 }

@@ -10,10 +10,12 @@ import lombok.experimental.Accessors;
 @ToString
 @EqualsAndHashCode
 @Accessors(chain = true)
-@Builder
-public class LoginDto {
+public class RoomDto {
 
-    private String email;
-    private String password;
+    private long id;
+    private int number;
+    private int price;
+    private boolean isAvailable;
+    private HotelDto hotelDto;
 
 }

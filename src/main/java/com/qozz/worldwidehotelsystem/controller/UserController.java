@@ -1,43 +1,51 @@
 package com.qozz.worldwidehotelsystem.controller;
 
 import com.qozz.worldwidehotelsystem.data.dto.SignUpDto;
-import com.qozz.worldwidehotelsystem.data.dto.UserInfoDto;
-import com.qozz.worldwidehotelsystem.data.entity.User;
+import com.qozz.worldwidehotelsystem.data.dto.UserDto;
 import com.qozz.worldwidehotelsystem.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.*;
+
 @RestController
-@RequestMapping(value = "/admin/users")
 @AllArgsConstructor
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
 
     @GetMapping
-    public List<UserInfoDto> getUsers() {
-        return userService.getUserInfoList();
+    @ResponseStatus(HttpStatus.OK)
+    public List<UserDto> findAll() {
+        return userService.findAll();
     }
 
-    @GetMapping(value = "/{userId}")
-    public UserInfoDto getUserById(@PathVariable Long userId) {
-        return userService.getUserById(userId);
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto findById(@PathVariable Long id) {
+        return userService.findById(id);
     }
 
     @PostMapping
-    public UserInfoDto createUser(@RequestBody SignUpDto signUpDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDto createUser(@Validated @RequestBody SignUpDto signUpDto) {
         return userService.createUser(signUpDto);
     }
 
-    @PutMapping(value = "/{userId}")
-    public UserInfoDto changeUser(@RequestBody UserInfoDto newUser, @PathVariable Long userId) {
-        return userService.changeUser(newUser, userId);
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public UserDto changeUser(@PathVariable Long id, @RequestBody UserDto newUser) {
+        return userService.changeUser(id, newUser);
     }
 
-    @DeleteMapping(value = "/{userId}")
-    public void deleteUser(@PathVariable Long userId) {
-        userService.deleteUserById(userId);
+    @DeleteMapping("/{id}")
+    @ResponseStatus(NO_CONTENT)
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
     }
 }

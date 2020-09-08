@@ -3,18 +3,15 @@ package com.qozz.worldwidehotelsystem.service;
 import com.qozz.worldwidehotelsystem.config.security.JwtProvider;
 import com.qozz.worldwidehotelsystem.data.dto.LoginDto;
 import com.qozz.worldwidehotelsystem.data.dto.SignUpDto;
-import com.qozz.worldwidehotelsystem.data.dto.UserInfoDto;
+import com.qozz.worldwidehotelsystem.data.dto.UserDto;
 import com.qozz.worldwidehotelsystem.data.entity.User;
 import com.qozz.worldwidehotelsystem.data.enumeration.Role;
 import com.qozz.worldwidehotelsystem.data.mapping.UserMapper;
 import com.qozz.worldwidehotelsystem.data.repository.UserRepository;
 import com.qozz.worldwidehotelsystem.exception.AuthenticationException;
 import com.qozz.worldwidehotelsystem.exception.PasswordsAreNotEqualsException;
-import com.qozz.worldwidehotelsystem.exception.UserAlreadyExistException;
-import com.qozz.worldwidehotelsystem.exception.UserDoesNotExistException;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,16 +24,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.qozz.worldwidehotelsystem.exception.ExceptionMessages.*;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
@@ -46,9 +41,10 @@ public class UserService {
 
     @Transactional
     public String createUserToken(LoginDto loginDto) {
-        LOGGER.debug("createUserToken(): loginDto = {}", loginDto.toString());
-        String username = loginDto.getUsername();
-        if (userRepository.findUserByUsername(username).isPresent()) {
+        log.debug("createUserToken(): loginDto = {}", loginDto.toString());
+
+        String email = loginDto.getEmail();
+        if (userRepository.findUserByEmail(email).isPresent()) {
             try {
                 return getAuthenticationToken(loginDto);
             } catch (BadCredentialsException e) {
@@ -60,66 +56,80 @@ public class UserService {
     }
 
     private String getAuthenticationToken(LoginDto loginDto) {
-        LOGGER.debug("getAuthenticationToken(): loginDto = {}", loginDto.toString());
-        String username = loginDto.getUsername();
+        log.debug("getAuthenticationToken(): loginDto = {}", loginDto.toString());
+
+        String email = loginDto.getEmail();
+
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, loginDto.getPassword()));
+                new UsernamePasswordAuthenticationToken(email, loginDto.getPassword()));
+
         Collection<String> roles = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-        return jwtProvider.createToken(username, roles);
+
+        return jwtProvider.createToken(email, roles);
     }
 
-    public UserInfoDto getUserById(Long userId) {
-        LOGGER.debug("getUserById(): userId = {}", userId);
-        return userRepository.findById(userId)
-                .map(userMapper::userToUserInfoDto)
-                .orElseThrow(() -> new UserDoesNotExistException(USER_DOES_NOT_EXIST));
-    }
+    public List<UserDto> findAll() {
+        log.debug("findAll()");
 
-    public List<UserInfoDto> getUserInfoList() {
-        LOGGER.debug("getUserInfoList()");
-        List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(userMapper::userToUserInfoDto)
+        return userRepository.findAll()
+                .stream()
+                .map(userMapper::userToUserDto)
                 .collect(Collectors.toList());
     }
 
-    public UserInfoDto createUser(SignUpDto signUpDto) {
-        LOGGER.debug("createUser(): signUpDto = {}", signUpDto.toString());
+    public UserDto findById(Long id) {
+        log.debug("findById(): id = {}", id);
+
+        return userRepository.findById(id)
+                .map(userMapper::userToUserDto)
+                .orElseThrow(() -> new RuntimeException("..."));
+    }
+
+    public UserDto createUser(SignUpDto signUpDto) {
+        log.debug("createUser(): signUpDto = {}", signUpDto.toString());
+
         if (!signUpDto.getPassword().equals(signUpDto.getRepeatPassword())) {
             throw new PasswordsAreNotEqualsException(PASSWORDS_ARE_NOT_EQUALS, signUpDto);
         }
 
-        Optional<User> newUser = userRepository.findUserByUsername(signUpDto.getUsername());
-
-        if (newUser.isPresent()) {
-            throw new UserAlreadyExistException("User with username (" + signUpDto.getUsername() + ") already exist!");
+        if (userRepository.existsByEmail(signUpDto.getEmail())) {
+            throw new RuntimeException("User with email [" + signUpDto.getEmail() + "] already exist!");
         }
 
         User user = new User()
-                .setUsername(signUpDto.getUsername())
+                .setEmail(signUpDto.getEmail())
                 .setPassword(passwordEncoder.encode(signUpDto.getPassword()))
                 .setRoles(Collections.singleton(Role.USER));
 
-        User saveUser = userRepository.saveAndFlush(user);
+        User save = userRepository.save(user);
 
-        return userMapper.userToUserInfoDto(saveUser);
+        return userMapper.userToUserDto(save);
     }
 
-    public UserInfoDto changeUser(UserInfoDto newUser, Long userId) {
-        LOGGER.debug("changeUser(): newUser = {}, userId = {}", newUser, userId);
-        return userRepository.findById(userId)
+    public UserDto changeUser(Long id, UserDto userDto) {
+        log.debug("changeUser(): userDto = {}, id = {}", userDto, id);
+
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            throw new RuntimeException("User with email [" + userDto.getEmail() + "] already exists!");
+        }
+
+        return userRepository.findById(id)
                 .map(user -> {
-                    user.setUsername(newUser.getUsername());
-                    user.setPassword(passwordEncoder.encode(newUser.getPassword()));
-                    User saveUser = userRepository.saveAndFlush(user);
-                    return userMapper.userToUserInfoDto(saveUser);
+                    user.setEmail(userDto.getEmail());
+                    user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+                    user.setRoles(userDto.getRoles());
+
+                    User save = userRepository.save(user);
+
+                    return userMapper.userToUserDto(save);
                 })
-                .orElseThrow(() -> new UserDoesNotExistException(USER_DOES_NOT_EXIST));
+                .orElseThrow(() -> new RuntimeException("User with id [" + userDto.getId() + "] doesn't exist!"));
     }
 
-    public void deleteUserById(Long userId) {
-        LOGGER.debug("deleteUserById(): userId = {}", userId);
-        userRepository.deleteById(userId);
+    public void deleteUser(Long id) {
+        log.debug("deleteUser(): id = {}", id);
+
+        userRepository.deleteById(id);
     }
 }

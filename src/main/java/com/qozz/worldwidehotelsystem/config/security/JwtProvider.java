@@ -39,8 +39,8 @@ public class JwtProvider {
         encodedSecretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String createToken(String username, Collection<String> roles) {
-        Claims claims = Jwts.claims().setSubject(username);
+    public String createToken(String email, Collection<String> roles) {
+        Claims claims = Jwts.claims().setSubject(email);
         claims.put(CLAIMS_ROLES_KEY, roles.stream().reduce((role, prev) -> prev + "," + role).orElseThrow(() ->
                 new IllegalArgumentException(MESSAGE_WRONG_ROLE)));
 
@@ -71,7 +71,9 @@ public class JwtProvider {
 
     public Collection<GrantedAuthority> getAuthorities(String token) {
         String auth = getClaimsFromToken(token).get(CLAIMS_ROLES_KEY).toString();
-        return Stream.of(auth.split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        return Stream.of(auth.split(","))
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 
     public String getUsername(String token) {

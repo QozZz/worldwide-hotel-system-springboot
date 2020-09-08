@@ -3,21 +3,20 @@ package com.qozz.worldwidehotelsystem.config.security;
 import com.qozz.worldwidehotelsystem.data.enumeration.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@SpringBootTest
 public class JwtProviderTest {
 
     private static final String TOKEN = "token";
@@ -31,7 +30,7 @@ public class JwtProviderTest {
     @Mock
     private HttpServletRequest request;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         inputField();
     }
@@ -45,9 +44,10 @@ public class JwtProviderTest {
         assertTrue((parseToken(token).get("auth")).toString().contains(ROLE));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void whenRoleIsEmpty(){
-        jwtProvider.createToken(USER_NAME, Collections.emptyList());
+    @Test
+    public void whenRoleIsEmpty() {
+        assertThrows(IllegalArgumentException.class,
+                () -> jwtProvider.createToken(USER_NAME, Collections.emptyList()));
     }
 
     @Test

@@ -9,10 +9,14 @@ import java.util.List;
 
 public interface HotelRepository extends JpaRepository<Hotel, Long> {
 
-    void deleteHotelById(Long hotelId);
+//    @Query("select h from Hotel h " +
+//            "where h.address.country = ?1 and h.address.city = ?2 and h.address.street = ?3 and h.address.number = ?4")
+    List<Hotel> findAllByAddressCountryAndAddressCityAndAddressStreetAndAddressNumber(
+            @Param("country") String country,
+            @Param("city") String city,
+            @Param("street") String street,
+            @Param("number") String number);
 
-    @Query(value = "select * from hotel\n" +
-            "where country like %?1% and city like %?2%", nativeQuery = true)
-    List<Hotel> findAllHotelsByCountryAndCity(@Param("country") String country,
-                                              @Param("city") String city);
+    boolean existsByName(String name);
+
 }

@@ -14,20 +14,22 @@ import javax.persistence.*;
 @Accessors(chain = true)
 @Entity
 @Builder
-public class Hotel {
+public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false, length = 100)
-    private String name;
+    @Column(nullable = false, length = 100)
+    private String country;
 
-    @Column(nullable = false)
-    private Integer stars;
+    @Column(nullable = false, length = 100)
+    private String city;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "address_id", nullable = false)
-    private Address address;
+    @Column(nullable = false, length = 100)
+    private String street;
+
+    @Column(nullable = false, length = 100)
+    private String number;
 
 }

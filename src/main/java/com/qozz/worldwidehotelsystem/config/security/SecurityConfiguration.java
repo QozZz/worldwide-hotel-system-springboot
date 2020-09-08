@@ -38,7 +38,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .and()
                 .authorizeRequests()
                 .antMatchers("/", "/home", "/login").permitAll()
-                .antMatchers("/admin/**").hasRole(Role.ADMIN.name())
                     .and()
                 .addFilterBefore(new JwtFilter(provider), UsernamePasswordAuthenticationFilter.class)
                 .cors();

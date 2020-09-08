@@ -1,17 +1,20 @@
 package com.qozz.worldwidehotelsystem.data.dto;
 
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.Accessors;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
 @Accessors(chain = true)
-public class HotelInfoDto {
+public class HotelDto {
 
     private long id;
     private String name;
     private int stars;
-    private String country;
-    private String city;
-    private String street;
-    private String number;
+    private AddressDto addressDto;
+
 }

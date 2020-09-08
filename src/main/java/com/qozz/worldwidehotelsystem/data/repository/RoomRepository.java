@@ -10,26 +10,17 @@ import java.util.List;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
-    @Query(value = "select r.id, r.floor, r.number, r.hotel_id, r.is_available, r.price\n" +
-            "   from schedule as s\n" +
-            "   join room as r on s.room_id = r.id\n" +
-            "   join usr as u on s.usr_id = u.id\n" +
-            "   where r.hotel_id = ?1 \n" +
-            "       and r.is_available = true \n" +
-            "       and r.id not in\n" +
-            "       (select room_id from schedule\n" +
-            "        where rent_start <= ?3 and rent_end >= ?2)\n" +
-            "   group by r.id", nativeQuery = true)
-    List<Room> findAllFreeByHotelId(@Param("hotel_id") Long hotelId,
-                                    @Param("rent_start") LocalDate rentStart,
-                                    @Param("rent_end") LocalDate rentEnd);
-
-    @Query(value = "select count(*)\n" +
-            "from schedule\n" +
-            "where rent_start <= ?3 \n" +
-            "and rent_end >= ?2 \n" +
-            "and room_id = ?1", nativeQuery = true)
-    int findNumberOfRentedRooms(@Param("room_id") Long roomId,
+    @Query(value = "select r from Room r " +
+            "inner join Schedule s on r.id = s.room.id " +
+            "where r.hotel.id = ?1 " +
+            "   and r.isAvailable = true " +
+            "   and r.id not in " +
+            "       (select s.room.id from Schedule s " +
+            "           where s.rentStart <= ?3 and s.rentEnd >= ?2)" +
+            "group by r.id ")
+    List<Room> findAllAvailable(@Param("hotel_id") Long hotelId,
                                 @Param("rent_start") LocalDate rentStart,
                                 @Param("rent_end") LocalDate rentEnd);
+
+    boolean existsByNumberAndHotelId(int number, long hotelId);
 }

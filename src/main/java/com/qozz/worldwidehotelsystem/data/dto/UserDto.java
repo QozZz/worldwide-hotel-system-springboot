@@ -1,17 +1,24 @@
 package com.qozz.worldwidehotelsystem.data.dto;
 
 import com.qozz.worldwidehotelsystem.data.enumeration.Role;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
 @Accessors(chain = true)
-public class UserInfoDto {
+@Builder
+public class UserDto {
     
     private Long id;
-    private String username;
+    private String email;
     private String password;
     private Set<Role> roles;
+
 }
