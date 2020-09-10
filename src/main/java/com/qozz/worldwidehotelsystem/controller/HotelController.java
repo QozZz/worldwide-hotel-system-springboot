@@ -1,47 +1,51 @@
 package com.qozz.worldwidehotelsystem.controller;
 
-import com.qozz.worldwidehotelsystem.data.dto.HotelInfoDto;
-import com.qozz.worldwidehotelsystem.data.entity.Hotel;
+import com.qozz.worldwidehotelsystem.data.dto.HotelDto;
 import com.qozz.worldwidehotelsystem.service.HotelService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/hotels")
 @AllArgsConstructor
+@RequestMapping("/api/hotels")
 public class HotelController {
 
     private final HotelService hotelService;
 
-    @GetMapping(value = "/{hotelId}")
-    public Hotel getHotelById(@PathVariable Long hotelId) {
-        return hotelService.getHotelById(hotelId);
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<HotelDto> findAll(@RequestParam(required = false, defaultValue = "") String country,
+                                  @RequestParam(required = false, defaultValue = "") String city,
+                                  @RequestParam(required = false, defaultValue = "") String street,
+                                  @RequestParam(required = false, defaultValue = "") String number) {
+        return hotelService.findAll(country, city, street, number);
     }
 
-    @GetMapping()
-    public List<HotelInfoDto> getAllHotelsInfo(@RequestParam(required = false, defaultValue = "") String country,
-                                               @RequestParam(required = false, defaultValue = "") String city) {
-        return hotelService.getHotelsInfo(country, city);
+    @GetMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public HotelDto findById(@PathVariable Long id) {
+        return hotelService.findById(id);
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
-    public Hotel createHotel(@RequestBody Hotel hotel) {
-        return hotelService.createHotel(hotel);
+    @ResponseStatus(HttpStatus.CREATED)
+    public HotelDto createHotel(@RequestBody HotelDto hotelDto) {
+        return hotelService.createHotel(hotelDto);
     }
 
-    @PutMapping(value = "/{hotelId}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public Hotel changeHotel(@RequestBody Hotel hotel, @PathVariable Long hotelId) {
-        return hotelService.changeHotel(hotel, hotelId);
+    @PutMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public HotelDto updateHotel(@PathVariable Long id, @RequestBody HotelDto hotelDto) {
+        return hotelService.updateHotel(id, hotelDto);
     }
 
-    @DeleteMapping(value = "/{hotelId}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public void deleteHotel(@PathVariable Long hotelId) {
-        hotelService.deleteHotelById(hotelId);
+    @DeleteMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteHotel(@PathVariable Long id) {
+        hotelService.deleteHotel(id);
     }
 }

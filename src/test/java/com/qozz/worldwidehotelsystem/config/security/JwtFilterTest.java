@@ -1,12 +1,11 @@
 package com.qozz.worldwidehotelsystem.config.security;
 
 import com.qozz.worldwidehotelsystem.exception.JwtAuthorizationException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -17,7 +16,7 @@ import java.io.IOException;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@SpringBootTest
 public class JwtFilterTest {
 
     private static final String TOKEN = "token";
@@ -38,7 +37,7 @@ public class JwtFilterTest {
     @Mock
     private FilterChain chain;
 
-    @Before
+    @BeforeEach
     public void setUp(){
         authorizationException = createException();
     }

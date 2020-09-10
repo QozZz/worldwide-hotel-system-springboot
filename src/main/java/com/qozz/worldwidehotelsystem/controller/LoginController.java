@@ -16,7 +16,7 @@ public class LoginController {
 
     private final UserService userService;
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public void login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
         response.setHeader(JwtProvider.TOKEN_HEADER,
                 JwtProvider.TOKEN_PREFIX + userService.createUserToken(loginDto));

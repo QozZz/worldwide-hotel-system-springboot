@@ -1,23 +1,19 @@
 package com.qozz.worldwidehotelsystem.data.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.util.Set;
 
-@Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString
 @EqualsAndHashCode
 @Accessors(chain = true)
+@Entity
+@Builder
 public class Hotel {
 
     @Id
@@ -28,22 +24,10 @@ public class Hotel {
     private String name;
 
     @Column(nullable = false)
-    private int stars;
+    private Integer stars;
 
-    @Column(nullable = false, length = 100)
-    private String country;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_id", nullable = false)
+    private Address address;
 
-    @Column(nullable = false, length = 100)
-    private String city;
-
-    @Column(nullable = false, length = 100)
-    private String street;
-
-    @Column(nullable = false, length = 10)
-    private String number;
-
-    @OneToMany(mappedBy = "hotel")
-    @JsonIgnore
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<Room> rooms;
 }

@@ -1,28 +1,29 @@
 package com.qozz.worldwidehotelsystem.data.mapping;
 
-import com.qozz.worldwidehotelsystem.data.dto.HotelInfoDto;
+import com.qozz.worldwidehotelsystem.data.dto.HotelDto;
 import com.qozz.worldwidehotelsystem.data.entity.Hotel;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 @Component
 public interface HotelMapper {
 
     @Mappings({
-            @Mapping(source = "id", target = "id"),
-            @Mapping(source = "name", target = "name"),
-            @Mapping(source = "stars", target = "stars"),
-            @Mapping(source = "country", target = "country"),
-            @Mapping(source = "city", target = "city"),
-            @Mapping(source = "street", target = "street"),
-            @Mapping(source = "number", target = "number"),
+            @Mapping(target = "id", source = "id"),
+            @Mapping(target = "name", source = "name"),
+            @Mapping(target = "stars", source = "stars"),
+            @Mapping(target = "addressDto.id", source = "hotel.address.id"),
+            @Mapping(target = "addressDto.country", source = "hotel.address.country"),
+            @Mapping(target = "addressDto.city", source = "hotel.address.city"),
+            @Mapping(target = "addressDto.street", source = "hotel.address.street"),
+            @Mapping(target = "addressDto.number", source = "hotel.address.number"),
     })
-    HotelInfoDto hotelToHotelAddressDto(Hotel hotel);
+    HotelDto hotelToHotelInfoDto(Hotel hotel);
 
-    List<HotelInfoDto> hotelsToHotelInfoDtoList(List<Hotel> hotels);
+    @InheritInverseConfiguration
+    Hotel hotelDtoToHotel(HotelDto hotelDto);
 }

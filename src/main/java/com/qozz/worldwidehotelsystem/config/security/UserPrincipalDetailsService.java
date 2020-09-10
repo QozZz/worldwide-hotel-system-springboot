@@ -17,16 +17,18 @@ public class UserPrincipalDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) {
-        Optional<User> user = userRepository.findUserByUsername(username);
-        return user.map(this::toUserDetails).orElseThrow(
-                () -> new UsernameNotFoundException("Wrong login"));
+    public UserDetails loadUserByUsername(String email) {
+        Optional<User> user = userRepository.findUserByEmail(email);
+
+        return user.map(this::toUserDetails)
+                .orElseThrow(() -> new UsernameNotFoundException("Wrong login"));
     }
 
     private UserDetails toUserDetails(User user) {
         return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
+                .withUsername(user.getEmail())
                 .password(user.getPassword())
-                .roles(user.getRoles().stream().map(Enum::name).toArray(String[]::new)).build();
+                .roles(user.getRoles().stream().map(Enum::name).toArray(String[]::new))
+                .build();
     }
 }

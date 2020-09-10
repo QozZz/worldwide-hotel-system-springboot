@@ -1,6 +1,5 @@
 package com.qozz.worldwidehotelsystem.config.security;
 
-import com.qozz.worldwidehotelsystem.data.enumeration.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +37,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .and()
                 .authorizeRequests()
                 .antMatchers("/", "/home", "/login").permitAll()
-                .antMatchers("/admin/**").hasRole(Role.ADMIN.name())
                     .and()
                 .addFilterBefore(new JwtFilter(provider), UsernamePasswordAuthenticationFilter.class)
                 .cors();

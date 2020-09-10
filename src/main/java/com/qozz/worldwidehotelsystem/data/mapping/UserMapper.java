@@ -1,24 +1,25 @@
 package com.qozz.worldwidehotelsystem.data.mapping;
 
-import com.qozz.worldwidehotelsystem.data.dto.UserInfoDto;
+import com.qozz.worldwidehotelsystem.data.dto.UserDto;
 import com.qozz.worldwidehotelsystem.data.entity.User;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 @Component
 public interface UserMapper {
     
     @Mappings({
-            @Mapping(source = "id", target = "id"),
-            @Mapping(source = "username", target = "username"),
-            @Mapping(source = "roles", target = "roles"),
+            @Mapping(target = "id", source = "id"),
+            @Mapping(target = "email", source = "email"),
+            @Mapping(target = "password", source = "password"),
+            @Mapping(target = "roles", source = "roles"),
     })
-    UserInfoDto userToUserInfoDto(User user);
+    UserDto userToUserDto(User user);
 
-    List<UserInfoDto> userListToUserIntoDtoList(List<User> users);
+    @InheritInverseConfiguration
+    User userDtoToUser(UserDto user);
 }
