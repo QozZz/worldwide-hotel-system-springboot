@@ -29,7 +29,7 @@ public class User {
     private String password;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "usr_role", joinColumns = @JoinColumn(name = "id"))
+    @CollectionTable(name = "usr_role", foreignKey = @ForeignKey(name = "usr_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 

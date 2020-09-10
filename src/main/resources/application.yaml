@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:2345/hotelsystem
+    username: postgres
+    password: example
+    initialization-mode: always
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        ddl-auto: none
+    generate-ddl: true
+    show-sql: true
+  liquibase:
+    enabled: true
+    drop-first: true
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+
+jwt:
+  secret: secret
+  expiration.time: 4
+
+logging:
+  file.name: worldwide-hotel-system.log
+  level.org.springframework.web: DEBUG
+  level.org.hibernate: ERROR
+  level.com.qozz.worldwidehotelsystem: DEBUG
+server:
+  port: 8888
