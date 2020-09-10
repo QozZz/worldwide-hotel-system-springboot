@@ -7,7 +7,6 @@ import com.qozz.worldwidehotelsystem.data.entity.User;
 import com.qozz.worldwidehotelsystem.data.enumeration.Role;
 import com.qozz.worldwidehotelsystem.data.repository.ScheduleRepository;
 import com.qozz.worldwidehotelsystem.data.repository.UserRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.ap.internal.util.Collections;
