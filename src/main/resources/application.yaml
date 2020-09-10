@@ -25,5 +25,6 @@ logging:
   level.org.springframework.web: DEBUG
   level.org.hibernate: ERROR
   level.com.qozz.worldwidehotelsystem: DEBUG
+
 server:
   port: 8888
