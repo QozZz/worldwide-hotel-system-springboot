@@ -27,7 +27,6 @@ public class ScheduleService {
     private final RoomRepository roomRepository;
 
     public List<ScheduleDto> findAll() {
-
         List<Schedule> schedules = scheduleRepository.findAll();
 
         return schedules.stream()
@@ -36,8 +35,6 @@ public class ScheduleService {
     }
 
     public ScheduleDto createSchedule(RentRoomDto rentRoomDto, String email) {
-        log.debug("rentRoom(): rentRoomDto = {}, email = {}", rentRoomDto.toString(), email);
-
         if (scheduleRepository.existsByRoomIdAndRentStartLessThanEqualAndRentEndGreaterThanEqual(
                 rentRoomDto.getRoomId(),
                 rentRoomDto.getRentEnd(),
