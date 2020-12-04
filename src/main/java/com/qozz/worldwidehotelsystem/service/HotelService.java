@@ -20,11 +20,17 @@ public class HotelService {
     private final HotelMapper hotelMapper;
     private final HotelRepository hotelRepository;
 
-    public List<HotelDto> findAll(String country, String city, String street, String number) {
-        log.debug("getHotelsInfo(): country = {}, city = {}", country, city);
+    public List<HotelDto> findAll() {
+//        log.debug("getHotelsInfo(): country = {}, city = {}", country, city);
+
+//        return hotelRepository
+//                .findAllByAddressCountryAndAddressCityAndAddressStreetAndAddressNumber(country, city, street, number)
+//                .stream()
+//                .map(hotelMapper::hotelToHotelInfoDto)
+//                .collect(Collectors.toList());
 
         return hotelRepository
-                .findAllByAddressCountryAndAddressCityAndAddressStreetAndAddressNumber(country, city, street, number)
+                .findAll()
                 .stream()
                 .map(hotelMapper::hotelToHotelInfoDto)
                 .collect(Collectors.toList());

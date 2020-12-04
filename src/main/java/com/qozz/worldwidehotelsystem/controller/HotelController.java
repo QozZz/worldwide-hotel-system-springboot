@@ -18,11 +18,13 @@ public class HotelController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<HotelDto> findAll(@RequestParam(required = false, defaultValue = "") String country,
-                                  @RequestParam(required = false, defaultValue = "") String city,
-                                  @RequestParam(required = false, defaultValue = "") String street,
-                                  @RequestParam(required = false, defaultValue = "") String number) {
-        return hotelService.findAll(country, city, street, number);
+//    public List<HotelDto> findAll(@RequestParam(required = false, defaultValue = "") String country,
+//                                  @RequestParam(required = false, defaultValue = "") String city,
+//                                  @RequestParam(required = false, defaultValue = "") String street,
+//                                  @RequestParam(required = false, defaultValue = "") String number) {
+//        return hotelService.findAll(country, city, street, number);
+    public List<HotelDto> findAll() {
+        return hotelService.findAll();
     }
 
     @GetMapping(value = "/{id}")
