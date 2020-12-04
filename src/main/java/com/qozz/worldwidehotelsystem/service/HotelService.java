@@ -14,15 +14,12 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@Slf4j
 public class HotelService {
 
     private final HotelMapper hotelMapper;
     private final HotelRepository hotelRepository;
 
     public List<HotelDto> findAll() {
-//        log.debug("getHotelsInfo(): country = {}, city = {}", country, city);
-
 //        return hotelRepository
 //                .findAllByAddressCountryAndAddressCityAndAddressStreetAndAddressNumber(country, city, street, number)
 //                .stream()
@@ -37,16 +34,12 @@ public class HotelService {
     }
 
     public HotelDto findById(Long id) {
-        log.debug("findById(): id = {}", id);
-
         return hotelRepository.findById(id)
                 .map(hotelMapper::hotelToHotelInfoDto)
                 .orElseThrow(() -> new RuntimeException("..."));
     }
 
     public HotelDto createHotel(HotelDto hotelDto) {
-        log.debug("createHotel(): hotel = {}", hotelDto.toString());
-
         if (hotelRepository.existsByName(hotelDto.getName())) {
             throw new RuntimeException("...");
         }
@@ -59,8 +52,6 @@ public class HotelService {
     }
 
     public HotelDto updateHotel(Long id, HotelDto hotelDto) {
-        log.debug("updateHotel(): hotelDto = {}, id = {}", hotelDto.toString(), id);
-
         if (hotelRepository.existsByName(hotelDto.getName())) {
             throw new RuntimeException("...");
         }
@@ -80,8 +71,6 @@ public class HotelService {
 
     @Transactional
     public void deleteHotel(Long id) {
-        log.debug("deleteHotel(): id = {}", id);
-
         hotelRepository.deleteById(id);
     }
 }

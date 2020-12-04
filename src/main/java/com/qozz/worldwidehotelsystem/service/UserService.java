@@ -41,8 +41,6 @@ public class UserService {
 
     @Transactional
     public String createUserToken(LoginDto loginDto) {
-        log.debug("createUserToken(): loginDto = {}", loginDto.toString());
-
         String email = loginDto.getEmail();
         if (userRepository.findUserByEmail(email).isPresent()) {
             try {
@@ -56,8 +54,6 @@ public class UserService {
     }
 
     private String getAuthenticationToken(LoginDto loginDto) {
-        log.debug("getAuthenticationToken(): loginDto = {}", loginDto.toString());
-
         String email = loginDto.getEmail();
 
         Authentication authentication = authenticationManager.authenticate(
@@ -70,8 +66,6 @@ public class UserService {
     }
 
     public List<UserDto> findAll() {
-        log.debug("findAll()");
-
         return userRepository.findAll()
                 .stream()
                 .map(userMapper::userToUserDto)
@@ -79,16 +73,12 @@ public class UserService {
     }
 
     public UserDto findById(Long id) {
-        log.debug("findById(): id = {}", id);
-
         return userRepository.findById(id)
                 .map(userMapper::userToUserDto)
                 .orElseThrow(() -> new RuntimeException("..."));
     }
 
     public UserDto createUser(SignUpDto signUpDto) {
-        log.debug("createUser(): signUpDto = {}", signUpDto.toString());
-
         if (!signUpDto.getPassword().equals(signUpDto.getRepeatPassword())) {
             throw new PasswordsAreNotEqualsException(PASSWORDS_ARE_NOT_EQUALS, signUpDto);
         }
@@ -108,8 +98,6 @@ public class UserService {
     }
 
     public UserDto changeUser(Long id, UserDto userDto) {
-        log.debug("changeUser(): userDto = {}, id = {}", userDto, id);
-
         if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new RuntimeException("User with email [" + userDto.getEmail() + "] already exists!");
         }
@@ -128,8 +116,6 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
-        log.debug("deleteUser(): id = {}", id);
-
         userRepository.deleteById(id);
     }
 }

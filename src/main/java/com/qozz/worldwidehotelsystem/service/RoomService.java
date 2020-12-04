@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@Slf4j
 public class RoomService {
 
     private final RoomMapper roomMapper;
@@ -31,15 +30,12 @@ public class RoomService {
     }
 
     public RoomDto findById(Long id) {
-        log.debug("findById(): id = {}", id);
         return roomRepository.findById(id)
                 .map(roomMapper::roomToRoomDto)
                 .orElseThrow(() -> new RuntimeException("..."));
     }
 
     public List<RoomDto> findAllAvailable(Long hotelId, LocalDate rentStart, LocalDate rentEnd) {
-        log.debug("getFreeRoomsInHotel(): hotelId = {}, rentStart = {}, rentEnd = {}", hotelId, rentStart, rentEnd);
-
         List<Room> rooms = roomRepository.findAllAvailable(hotelId, rentStart, rentEnd);
 
         return rooms.stream()
