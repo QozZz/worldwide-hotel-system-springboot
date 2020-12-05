@@ -11,7 +11,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedHeaders("Content-Type", "Access-Control-Allow-Headers", "Authorization", "X-Requested-With")
-                .allowedOrigins("http://localhost:4200", "https://dashboard.heroku.com/apps/hotel-system-f")
+                .allowedOrigins("http://localhost:4200", "https://hotel-system-f.herokuapp.com")
                 .exposedHeaders("Content-Type", "Access-Control-Allow-Headers", "Authorization", "X-Requested-With")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     }
