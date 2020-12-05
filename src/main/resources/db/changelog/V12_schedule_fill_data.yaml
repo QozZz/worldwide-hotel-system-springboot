@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: Schedule fill data
+      author: Qozz
+      changes:
+        - insert:
+            tableName: schedule
+            columns:
+              - column:
+                  name: room_id
+                  value: 1
+              - column:
+                  name: usr_id
+                  value: 1
+              - column:
+                  name: rent_start
+                  value: 2020-12-01
+              - column:
+                  name: rent_end
+                  value: 2020-12-25

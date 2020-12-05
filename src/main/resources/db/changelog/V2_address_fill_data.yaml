@@ -1,0 +1,50 @@
+databaseChangeLog:
+  - changeSet:
+      id: Address fill data
+      author: Qozz
+      changes:
+        - insert:
+            tableName: address
+            columns:
+              - column:
+                  name: country
+                  value: "Germany"
+              - column:
+                  name: city
+                  value: "Berlin"
+              - column:
+                  name: street
+                  value: "AAA"
+              - column:
+                  name: number
+                  value: "11"
+        - insert:
+            tableName: address
+            columns:
+              - column:
+                  name: country
+                  value: "Germany"
+              - column:
+                  name: city
+                  value: "Berlin"
+              - column:
+                  name: street
+                  value: "BBB"
+              - column:
+                  name: number
+                  value: "22"
+        - insert:
+            tableName: address
+            columns:
+              - column:
+                  name: country
+                  value: "Germany"
+              - column:
+                  name: city
+                  value: "Berlin"
+              - column:
+                  name: street
+                  value: "CCC"
+              - column:
+                  name: number
+                  value: "33"

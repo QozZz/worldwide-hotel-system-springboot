@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: Hotel fill data
+      author: Qozz
+      changes:
+        - insert:
+            tableName: hotel
+            columns:
+              - column:
+                  name: name
+                  value: "Hotel X"
+              - column:
+                  name: stars
+                  value: 3
+              - column:
+                  name: address_id
+                  value: 1
+        - insert:
+            tableName: hotel
+            columns:
+              - column:
+                  name: name
+                  value: "Hotel Y"
+              - column:
+                  name: stars
+                  value: 4
+              - column:
+                  name: address_id
+                  value: 2
+        - insert:
+            tableName: hotel
+            columns:
+              - column:
+                  name: name
+                  value: "Hotel Z"
+              - column:
+                  name: stars
+                  value: 5
+              - column:
+                  name: address_id
+                  value: 3

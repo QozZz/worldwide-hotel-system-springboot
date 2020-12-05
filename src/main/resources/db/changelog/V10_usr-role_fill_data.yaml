@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: Usr fill data
+      author: Qozz
+      changes:
+        - insert:
+            tableName: usr_role
+            columns:
+              - column:
+                  name: usr_id
+                  value: 1
+              - column:
+                  name: roles
+                  value: "ADMIN"
+        - insert:
+            tableName: usr_role
+            columns:
+              - column:
+                  name: usr_id
+                  value: 1
+              - column:
+                  name: roles
+                  value: "USER"
