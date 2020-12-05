@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: Usr fill data
+      author: Qozz
+      changes:
+        - insert:
+            tableName: usr
+            columns:
+              - column:
+                  name: email
+                  value: "user@gmail.com"
+              - column:
+                  name: password
+                  value: "$2a$10$9//0cxKPOONZoq0uajXH.eHAVAl.NyM.BZYXivt.DgNoTLHnCVMIi"
