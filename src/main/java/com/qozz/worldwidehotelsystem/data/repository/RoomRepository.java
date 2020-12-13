@@ -23,4 +23,6 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
                                 @Param("rent_end") LocalDate rentEnd);
 
     boolean existsByNumberAndHotelId(int number, long hotelId);
+
+    List<Room> findAllByHotelId(Long hotelId);
 }

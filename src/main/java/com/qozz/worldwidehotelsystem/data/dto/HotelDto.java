@@ -15,9 +15,9 @@ public class HotelDto {
     private long id;
     private String name;
     private int stars;
-    private AddressDto addressDto;
     private String description;
     private boolean hasPool;
     private boolean hasRestaurant;
+    private AddressDto addressDto;
 
 }
