@@ -30,4 +30,13 @@ public class Hotel {
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
+    @Column(nullable = false)
+    private String description;
+
+    @Column(nullable = false)
+    private Boolean hasPool;
+
+    @Column(nullable = false)
+    private Boolean hasRestaurant;
+
 }

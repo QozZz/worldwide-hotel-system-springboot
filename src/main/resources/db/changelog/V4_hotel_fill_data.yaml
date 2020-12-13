@@ -15,6 +15,17 @@ databaseChangeLog:
               - column:
                   name: address_id
                   value: 1
+              - column:
+                  name: description
+                  value: Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X
+                    Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X
+                    Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X Hotel X
+              - column:
+                  name: has_pool
+                  value: false
+              - column:
+                  name: has_restaurant
+                  value: false
         - insert:
             tableName: hotel
             columns:
@@ -27,6 +38,17 @@ databaseChangeLog:
               - column:
                   name: address_id
                   value: 2
+              - column:
+                  name: description
+                  value: Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y
+                    Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y
+                    Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y Hotel Y
+              - column:
+                  name: has_pool
+                  value: false
+              - column:
+                  name: has_restaurant
+                  value: true
         - insert:
             tableName: hotel
             columns:
@@ -39,3 +61,14 @@ databaseChangeLog:
               - column:
                   name: address_id
                   value: 3
+              - column:
+                  name: description
+                  value: Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z
+                    Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z
+                    Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z Hotel Z
+              - column:
+                  name: has_pool
+                  value: true
+              - column:
+                  name: has_restaurant
+                  value: true
