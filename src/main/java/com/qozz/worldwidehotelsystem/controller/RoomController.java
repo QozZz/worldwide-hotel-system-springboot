@@ -22,10 +22,10 @@ public class RoomController {
 
     private final RoomService roomService;
 
-    @GetMapping
+    @GetMapping("/hotel/{hotelId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<RoomDto> findAll() {
-        return roomService.findAll();
+    public List<RoomDto> findAllByHotelId(@PathVariable Long hotelId) {
+        return roomService.findAllByHotelId(hotelId);
     }
 
     @GetMapping("/{id}")

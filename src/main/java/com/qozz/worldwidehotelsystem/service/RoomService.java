@@ -22,8 +22,8 @@ public class RoomService {
     private final RoomMapper roomMapper;
     private final RoomRepository roomRepository;
 
-    public List<RoomDto> findAll() {
-        return roomRepository.findAll()
+    public List<RoomDto> findAllByHotelId(Long hotelId) {
+        return roomRepository.findAllByHotelId(hotelId)
                 .stream()
                 .map(roomMapper::roomToRoomDto)
                 .collect(Collectors.toList());

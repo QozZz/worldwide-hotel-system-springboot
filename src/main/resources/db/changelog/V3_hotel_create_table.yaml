@@ -26,6 +26,21 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: description
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: has_pool
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: has_restaurant
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
                   name: address_id
                   type: BIGINT
                   constraints:
