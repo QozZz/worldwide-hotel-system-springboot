@@ -26,7 +26,7 @@ databaseChangeLog:
                   value: 102
               - column:
                   name: price
-                  value: 75
+                  value: 65
               - column:
                   name: is_available
                   value: true
@@ -41,7 +41,22 @@ databaseChangeLog:
                   value: 103
               - column:
                   name: price
-                  value: 80
+                  value: 35
+              - column:
+                  name: is_available
+                  value: true
+              - column:
+                  name: hotel_id
+                  value: 1
+        - insert:
+            tableName: room
+            columns:
+              - column:
+                  name: number
+                  value: 104
+              - column:
+                  name: price
+                  value: 250
               - column:
                   name: is_available
                   value: true
@@ -56,7 +71,7 @@ databaseChangeLog:
                   value: 101
               - column:
                   name: price
-                  value: 50
+                  value: 10
               - column:
                   name: is_available
                   value: true
@@ -71,7 +86,7 @@ databaseChangeLog:
                   value: 102
               - column:
                   name: price
-                  value: 75
+                  value: 15
               - column:
                   name: is_available
                   value: true
@@ -86,7 +101,22 @@ databaseChangeLog:
                   value: 103
               - column:
                   name: price
-                  value: 80
+                  value: 25
+              - column:
+                  name: is_available
+                  value: true
+              - column:
+                  name: hotel_id
+                  value: 2
+        - insert:
+            tableName: room
+            columns:
+              - column:
+                  name: number
+                  value: 104
+              - column:
+                  name: price
+                  value: 5
               - column:
                   name: is_available
                   value: true
@@ -101,7 +131,7 @@ databaseChangeLog:
                   value: 101
               - column:
                   name: price
-                  value: 50
+                  value: 70
               - column:
                   name: is_available
                   value: true
@@ -116,7 +146,7 @@ databaseChangeLog:
                   value: 102
               - column:
                   name: price
-                  value: 75
+                  value: 85
               - column:
                   name: is_available
                   value: true
@@ -131,10 +161,85 @@ databaseChangeLog:
                   value: 103
               - column:
                   name: price
-                  value: 80
+                  value: 110
               - column:
                   name: is_available
                   value: true
               - column:
                   name: hotel_id
                   value: 3
+        - insert:
+            tableName: room
+            columns:
+              - column:
+                  name: number
+                  value: 101
+              - column:
+                  name: price
+                  value: 95
+              - column:
+                  name: is_available
+                  value: true
+              - column:
+                  name: hotel_id
+                  value: 3
+        - insert:
+            tableName: room
+            columns:
+              - column:
+                  name: number
+                  value: 101
+              - column:
+                  name: price
+                  value: 125
+              - column:
+                  name: is_available
+                  value: true
+              - column:
+                  name: hotel_id
+                  value: 4
+        - insert:
+            tableName: room
+            columns:
+              - column:
+                  name: number
+                  value: 101
+              - column:
+                  name: price
+                  value: 155
+              - column:
+                  name: is_available
+                  value: true
+              - column:
+                  name: hotel_id
+                  value: 4
+        - insert:
+            tableName: room
+            columns:
+              - column:
+                  name: number
+                  value: 101
+              - column:
+                  name: price
+                  value: 210
+              - column:
+                  name: is_available
+                  value: true
+              - column:
+                  name: hotel_id
+                  value: 4
+        - insert:
+            tableName: room
+            columns:
+              - column:
+                  name: number
+                  value: 101
+              - column:
+                  name: price
+                  value: 105
+              - column:
+                  name: is_available
+                  value: true
+              - column:
+                  name: hotel_id
+                  value: 4
