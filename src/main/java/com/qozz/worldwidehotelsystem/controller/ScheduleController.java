@@ -26,9 +26,10 @@ public class ScheduleController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ScheduleDto createSchedule(@RequestBody RentRoomDto rentRoomDto,
-                                      @AuthenticationPrincipal String email) {
-        return scheduleService.createSchedule(rentRoomDto, email);
+    public ScheduleDto createSchedule(@RequestBody RentRoomDto rentRoomDto
+//                                      @AuthenticationPrincipal String email
+    ) {
+        return scheduleService.createSchedule(rentRoomDto, "user@gmail.com");
     }
 
 }

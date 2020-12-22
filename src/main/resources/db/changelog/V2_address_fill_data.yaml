@@ -48,3 +48,18 @@ databaseChangeLog:
               - column:
                   name: number
                   value: "33"
+        - insert:
+            tableName: address
+            columns:
+              - column:
+                  name: country
+                  value: "Germany"
+              - column:
+                  name: city
+                  value: "Berlin"
+              - column:
+                  name: street
+                  value: "DDD"
+              - column:
+                  name: number
+                  value: "44"

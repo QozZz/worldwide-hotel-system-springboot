@@ -72,3 +72,27 @@ databaseChangeLog:
               - column:
                   name: has_restaurant
                   value: true
+        - insert:
+            tableName: hotel
+            columns:
+              - column:
+                  name: name
+                  value: "Hotel K"
+              - column:
+                  name: stars
+                  value: 4
+              - column:
+                  name: address_id
+                  value: 4
+              - column:
+                  name: description
+                  value: Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K
+                    Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K
+                    Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K Hotel K
+              - column:
+                  name: has_pool
+                  value: false
+              - column:
+                  name: has_restaurant
+                  value: true
+
