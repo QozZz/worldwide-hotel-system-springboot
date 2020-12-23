@@ -4,16 +4,18 @@ import com.qozz.worldwidehotelsystem.data.dto.HotelDto;
 import com.qozz.worldwidehotelsystem.data.entity.Hotel;
 import com.qozz.worldwidehotelsystem.data.mapping.HotelMapper;
 import com.qozz.worldwidehotelsystem.data.repository.HotelRepository;
+import com.qozz.worldwidehotelsystem.exception.EntityAlreadyExistsException;
+import com.qozz.worldwidehotelsystem.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
 @AllArgsConstructor
+@Service
 public class HotelService {
 
     private final HotelMapper hotelMapper;
@@ -36,12 +38,12 @@ public class HotelService {
     public HotelDto findById(Long id) {
         return hotelRepository.findById(id)
                 .map(hotelMapper::hotelToHotelInfoDto)
-                .orElseThrow(() -> new RuntimeException("..."));
+                .orElseThrow(() -> new EntityNotFoundException("Hotel with Id [" + id + "] doesn't exist"));
     }
 
     public HotelDto createHotel(HotelDto hotelDto) {
         if (hotelRepository.existsByName(hotelDto.getName())) {
-            throw new RuntimeException("...");
+            throw new EntityAlreadyExistsException("Hotel with Name [" + hotelDto.getName() + "] already exists");
         }
 
         Hotel hotel = hotelMapper.hotelDtoToHotel(hotelDto);
@@ -53,7 +55,7 @@ public class HotelService {
 
     public HotelDto updateHotel(Long id, HotelDto hotelDto) {
         if (hotelRepository.existsByName(hotelDto.getName())) {
-            throw new RuntimeException("...");
+            throw new EntityAlreadyExistsException("Hotel with Name [" + hotelDto.getName() + "] already exists");
         }
 
         Hotel hotel = hotelRepository.findById(id)
@@ -62,7 +64,7 @@ public class HotelService {
                     hotelDb.setStars(hotelDto.getStars());
                     return hotelDb;
                 })
-                .orElseThrow(() -> new RuntimeException("..."));
+                .orElseThrow(() -> new EntityNotFoundException("Hotel with Id [" + id + "] doesn't exist"));
 
         Hotel save = hotelRepository.save(hotel);
 
@@ -71,6 +73,10 @@ public class HotelService {
 
     @Transactional
     public void deleteHotel(Long id) {
-        hotelRepository.deleteById(id);
+        try {
+            hotelRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntityNotFoundException("Hotel with Id [" + id + "] doesn't exist");
+        }
     }
 }

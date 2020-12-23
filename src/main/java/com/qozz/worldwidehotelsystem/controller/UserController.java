@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
-@RestController
 @AllArgsConstructor
+@RestController
 @RequestMapping("/api/users")
 public class UserController {
 
@@ -39,8 +39,8 @@ public class UserController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public UserDto changeUser(@PathVariable Long id, @RequestBody UserDto newUser) {
-        return userService.changeUser(id, newUser);
+    public UserDto updateUser(@PathVariable Long id, @RequestBody UserDto newUser) {
+        return userService.updateUser(id, newUser);
     }
 
     @DeleteMapping("/{id}")

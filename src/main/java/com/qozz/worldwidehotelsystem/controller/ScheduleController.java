@@ -5,14 +5,12 @@ import com.qozz.worldwidehotelsystem.data.dto.ScheduleDto;
 import com.qozz.worldwidehotelsystem.service.ScheduleService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
 @AllArgsConstructor
+@RestController
 @RequestMapping("/api/schedules")
 public class ScheduleController {
 

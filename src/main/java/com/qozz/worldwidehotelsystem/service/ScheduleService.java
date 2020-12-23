@@ -9,16 +9,16 @@ import com.qozz.worldwidehotelsystem.data.mapping.ScheduleMapper;
 import com.qozz.worldwidehotelsystem.data.repository.RoomRepository;
 import com.qozz.worldwidehotelsystem.data.repository.ScheduleRepository;
 import com.qozz.worldwidehotelsystem.data.repository.UserRepository;
+import com.qozz.worldwidehotelsystem.exception.EntityAlreadyExistsException;
+import com.qozz.worldwidehotelsystem.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
 @AllArgsConstructor
-@Slf4j
+@Service
 public class ScheduleService {
 
     private final ScheduleMapper scheduleMapper;
@@ -39,14 +39,16 @@ public class ScheduleService {
                 rentRoomDto.getRoomId(),
                 rentRoomDto.getRentEnd(),
                 rentRoomDto.getRentStart())) {
-            throw new RuntimeException("...");
+            throw new EntityAlreadyExistsException("Dates " +
+                    "[From:" + rentRoomDto.getRentStart() + " -- To: " + rentRoomDto.getRentEnd() + "] " +
+                    "are not available for Room with id[" + rentRoomDto.getRoomId() + "]");
         }
 
         User user = userRepository.findUserByEmail(email)
-                .orElseThrow(() -> new RuntimeException("..."));
+                .orElseThrow(() -> new EntityNotFoundException("User with Name [" + email + "] doesn't exist"));
 
-        Room room =  roomRepository.findById(rentRoomDto.getRoomId())
-                .orElseThrow(() -> new RuntimeException("..."));
+        Room room = roomRepository.findById(rentRoomDto.getRoomId())
+                .orElseThrow(() -> new EntityNotFoundException("Room with Id [" + rentRoomDto.getRoomId() + "] doesn't exist"));
 
         Schedule schedule = new Schedule()
                 .setRoom(room)
