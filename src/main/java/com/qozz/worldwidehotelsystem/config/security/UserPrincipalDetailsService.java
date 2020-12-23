@@ -21,7 +21,7 @@ public class UserPrincipalDetailsService implements UserDetailsService {
         Optional<User> user = userRepository.findUserByEmail(email);
 
         return user.map(this::toUserDetails)
-                .orElseThrow(() -> new UsernameNotFoundException("Wrong login"));
+                .orElseThrow(() -> new UsernameNotFoundException("User [" + email + "] doesn't exist"));
     }
 
     private UserDetails toUserDetails(User user) {

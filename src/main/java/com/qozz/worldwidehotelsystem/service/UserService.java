@@ -8,10 +8,11 @@ import com.qozz.worldwidehotelsystem.data.entity.User;
 import com.qozz.worldwidehotelsystem.data.enumeration.Role;
 import com.qozz.worldwidehotelsystem.data.mapping.UserMapper;
 import com.qozz.worldwidehotelsystem.data.repository.UserRepository;
-import com.qozz.worldwidehotelsystem.exception.AuthenticationException;
-import com.qozz.worldwidehotelsystem.exception.PasswordsAreNotEqualsException;
+import com.qozz.worldwidehotelsystem.exception.AuthException;
+import com.qozz.worldwidehotelsystem.exception.EntityAlreadyExistsException;
+import com.qozz.worldwidehotelsystem.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,11 +27,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.qozz.worldwidehotelsystem.exception.ExceptionMessages.*;
-
-@Service
 @AllArgsConstructor
-@Slf4j
+@Service
 public class UserService {
 
     private final AuthenticationManager authenticationManager;
@@ -46,10 +44,10 @@ public class UserService {
             try {
                 return getAuthenticationToken(loginDto);
             } catch (BadCredentialsException e) {
-                throw new AuthenticationException(MESSAGE_WRONG_PASSWORD);
+                throw new AuthException("Wrong Password");
             }
         } else {
-            throw new AuthenticationException(MESSAGE_WRONG_USER_NAME);
+            throw new AuthException("User [" + loginDto.getEmail() + "] doesn't exist");
         }
     }
 
@@ -75,16 +73,16 @@ public class UserService {
     public UserDto findById(Long id) {
         return userRepository.findById(id)
                 .map(userMapper::userToUserDto)
-                .orElseThrow(() -> new RuntimeException("..."));
+                .orElseThrow(() -> new EntityNotFoundException("User with Id [" + id + "] doesn't exist"));
     }
 
     public UserDto createUser(SignUpDto signUpDto) {
         if (!signUpDto.getPassword().equals(signUpDto.getRepeatPassword())) {
-            throw new PasswordsAreNotEqualsException(PASSWORDS_ARE_NOT_EQUALS, signUpDto);
+            throw new AuthException("Passwords must match");
         }
 
         if (userRepository.existsByEmail(signUpDto.getEmail())) {
-            throw new RuntimeException("User with email [" + signUpDto.getEmail() + "] already exist!");
+            throw new EntityAlreadyExistsException("User with email [" + signUpDto.getEmail() + "] already exist");
         }
 
         User user = new User()
@@ -97,9 +95,10 @@ public class UserService {
         return userMapper.userToUserDto(save);
     }
 
-    public UserDto changeUser(Long id, UserDto userDto) {
+    public UserDto updateUser(Long id, UserDto userDto) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
-            throw new RuntimeException("User with email [" + userDto.getEmail() + "] already exists!");
+            throw new EntityAlreadyExistsException("User with email [" + userDto.getEmail() + "] already exists" +
+                    "");
         }
 
         return userRepository.findById(id)
@@ -112,10 +111,14 @@ public class UserService {
 
                     return userMapper.userToUserDto(save);
                 })
-                .orElseThrow(() -> new RuntimeException("User with id [" + userDto.getId() + "] doesn't exist!"));
+                .orElseThrow(() -> new EntityNotFoundException("User with Id [" + userDto.getId() + "] doesn't exist"));
     }
 
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        try {
+            userRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntityNotFoundException("User with Id [" + id + "] doesn't exist");
+        }
     }
 }

@@ -4,13 +4,12 @@ import com.qozz.worldwidehotelsystem.data.dto.HotelDto;
 import com.qozz.worldwidehotelsystem.service.HotelService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
 @AllArgsConstructor
+@RestController
 @RequestMapping("/api/hotels")
 public class HotelController {
 

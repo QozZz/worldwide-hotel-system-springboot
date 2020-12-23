@@ -4,14 +4,17 @@ import com.qozz.worldwidehotelsystem.data.dto.AddressDto;
 import com.qozz.worldwidehotelsystem.data.entity.Address;
 import com.qozz.worldwidehotelsystem.data.mapping.AddressMapper;
 import com.qozz.worldwidehotelsystem.data.repository.AddressRepository;
+import com.qozz.worldwidehotelsystem.exception.EntityAlreadyExistsException;
+import com.qozz.worldwidehotelsystem.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
 @AllArgsConstructor
+@Service
 public class AddressService {
 
     private final AddressMapper addressMapper;
@@ -27,13 +30,17 @@ public class AddressService {
     public AddressDto findById(Long id) {
         return addressRepository.findById(id)
                 .map(addressMapper::addressToAddressDto)
-                .orElseThrow(() -> new RuntimeException("..."));
+                .orElseThrow(() -> new EntityNotFoundException("Address with Id [" + id + "] doesn't exist"));
     }
 
     public AddressDto createAddress(AddressDto addressDto) {
         if (addressRepository.existsByCountryAndCityAndStreetAndNumber(
                 addressDto.getCountry(), addressDto.getCity(), addressDto.getStreet(), addressDto.getNumber())) {
-            throw new RuntimeException("...");
+            throw new EntityAlreadyExistsException("Address with: " +
+                    "Country [" + addressDto.getCountry() + "] " +
+                    "City [" + addressDto.getCity() + "] " +
+                    "Street [" + addressDto.getStreet() + "] " +
+                    "Number [" + addressDto.getNumber() + "] already exists");
         }
 
         Address address = addressMapper.addressDtoToAddress(addressDto);
@@ -46,7 +53,11 @@ public class AddressService {
     public AddressDto updateAddress(Long id, AddressDto addressDto) {
         if (addressRepository.existsByCountryAndCityAndStreetAndNumber(
                 addressDto.getCountry(), addressDto.getCity(), addressDto.getStreet(), addressDto.getNumber())) {
-            throw new RuntimeException("...");
+            throw new EntityAlreadyExistsException("Address with: " +
+                    "Country [" + addressDto.getCountry() + "] " +
+                    "City [" + addressDto.getCity() + "] " +
+                    "Street [" + addressDto.getStreet() + "] " +
+                    "Number [" + addressDto.getNumber() + "] already exists");
         }
 
         Address address = addressRepository.findById(id)
@@ -57,7 +68,7 @@ public class AddressService {
                     addressDb.setNumber(addressDto.getNumber());
                     return addressDb;
                 })
-                .orElseThrow(() -> new RuntimeException("..."));
+                .orElseThrow(() -> new EntityNotFoundException("Address with Id [" + id + "] doesn't exist"));
 
         Address save = addressRepository.save(address);
 
@@ -65,6 +76,10 @@ public class AddressService {
     }
 
     public void deleteAddress(Long id) {
-        addressRepository.deleteById(id);
+        try {
+            addressRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntityNotFoundException("Address with Id [" + id + "] doesn't exist");
+        }
     }
 }
