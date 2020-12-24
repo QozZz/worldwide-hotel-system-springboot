@@ -68,6 +68,11 @@ public class ScheduleService {
 
     private void validateRentDates(RentRoomDto rentRoomDto) {
         LocalDate currentDate = LocalDate.now();
+
+        if (rentRoomDto.getRentStart() == null || rentRoomDto.getRentEnd() == null) {
+            throw new RentException("Dates are empty");
+        }
+
         if ((rentRoomDto.getRentStart().isBefore(currentDate) || rentRoomDto.getRentEnd().isBefore(currentDate))) {
             throw new RentException("Dates should not be earlier than today");
         }
