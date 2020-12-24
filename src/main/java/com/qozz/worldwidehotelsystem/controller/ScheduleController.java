@@ -18,14 +18,14 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
-    @PreAuthorize("hasAnyRole('ROLE_USER' or 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<ScheduleDto> findAll() {
         return scheduleService.findAll();
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_USER' or 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ScheduleDto createSchedule(@RequestBody RentRoomDto rentRoomDto,
