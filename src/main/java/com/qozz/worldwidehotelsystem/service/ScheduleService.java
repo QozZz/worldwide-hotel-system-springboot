@@ -11,9 +11,12 @@ import com.qozz.worldwidehotelsystem.data.repository.ScheduleRepository;
 import com.qozz.worldwidehotelsystem.data.repository.UserRepository;
 import com.qozz.worldwidehotelsystem.exception.EntityAlreadyExistsException;
 import com.qozz.worldwidehotelsystem.exception.EntityNotFoundException;
+import com.qozz.worldwidehotelsystem.exception.RentException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +38,8 @@ public class ScheduleService {
     }
 
     public ScheduleDto createSchedule(RentRoomDto rentRoomDto, String email) {
+        validateRentDates(rentRoomDto);
+
         if (scheduleRepository.existsByRoomIdAndRentStartLessThanEqualAndRentEndGreaterThanEqual(
                 rentRoomDto.getRoomId(),
                 rentRoomDto.getRentEnd(),
@@ -59,5 +64,16 @@ public class ScheduleService {
         Schedule save = scheduleRepository.save(schedule);
 
         return scheduleMapper.scheduleToScheduleDto(save);
+    }
+
+    private void validateRentDates(RentRoomDto rentRoomDto) {
+        LocalDate currentDate = LocalDate.now();
+        if ((rentRoomDto.getRentStart().isBefore(currentDate) || rentRoomDto.getRentEnd().isBefore(currentDate))) {
+            throw new RentException("Dates should not be earlier than today");
+        }
+
+        if ((rentRoomDto.getRentEnd().isBefore(rentRoomDto.getRentStart()))) {
+            throw new RentException("Date [End] should not be earlier than [Start]");
+        }
     }
 }
