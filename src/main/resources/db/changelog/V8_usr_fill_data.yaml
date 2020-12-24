@@ -11,7 +11,7 @@ databaseChangeLog:
                   value: "admin@gmail.com"
               - column:
                   name: password
-                  value: "$2a$10$9//0cxKPOONZoq0uajXH.eHAVAl.NyM.BZYXivt.DgNoTLHnCVMIi"
+                  value: "$2a$10$s0D/K1cXfc1O731INfL4H..welOlwQ5SbazNK99uDwYTWaL61iiGa"
         - insert:
             tableName: usr
             columns:
