@@ -8,6 +8,15 @@ databaseChangeLog:
             columns:
               - column:
                   name: email
+                  value: "admin@gmail.com"
+              - column:
+                  name: password
+                  value: "$2a$10$9//0cxKPOONZoq0uajXH.eHAVAl.NyM.BZYXivt.DgNoTLHnCVMIi"
+        - insert:
+            tableName: usr
+            columns:
+              - column:
+                  name: email
                   value: "user@gmail.com"
               - column:
                   name: password

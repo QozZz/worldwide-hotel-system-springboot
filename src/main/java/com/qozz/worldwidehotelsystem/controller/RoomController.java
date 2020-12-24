@@ -18,21 +18,21 @@ public class RoomController {
 
     private final RoomService roomService;
 
-    @PreAuthorize("hasAnyRole('ROLE_USER' or 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping("/hotel/{hotelId}")
     @ResponseStatus(HttpStatus.OK)
     public List<RoomDto> findAllByHotelId(@PathVariable Long hotelId) {
         return roomService.findAllByHotelId(hotelId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_USER' or 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public RoomDto findById(@PathVariable Long id) {
         return roomService.findById(id);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_USER' or 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping("/free")
     @ResponseStatus(HttpStatus.OK)
     public List<RoomDto> findAllAvailable(@RequestParam(value = "hotelId") Long hotelId,

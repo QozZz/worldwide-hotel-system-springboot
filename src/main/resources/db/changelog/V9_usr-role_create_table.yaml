@@ -19,19 +19,3 @@ databaseChangeLog:
                   type: VARCHAR(100)
                   constraints:
                     nullable: false
-
-
-#                    CREATE TABLE public.usr_role
-#                    (
-#                    usr_id bigint NOT NULL,
-#                    roles character varying(100) COLLATE pg_catalog."default",
-#                    CONSTRAINT usr_id FOREIGN KEY (usr_id)
-#                    REFERENCES public.usr (id) MATCH SIMPLE
-#                    ON UPDATE NO ACTION
-#                    ON DELETE NO ACTION
-#                    )
-#
-#                    TABLESPACE pg_default;
-#
-#                    ALTER TABLE public.usr_role
-#                    OWNER to postgres;
