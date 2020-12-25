@@ -16,7 +16,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +44,7 @@ public class ScheduleService {
                 rentRoomDto.getRentEnd(),
                 rentRoomDto.getRentStart())) {
             throw new EntityAlreadyExistsException("Dates " +
-                    "[From:" + rentRoomDto.getRentStart() + " -- To: " + rentRoomDto.getRentEnd() + "] " +
+                    "[" + rentRoomDto.getRentStart() + " -- " + rentRoomDto.getRentEnd() + "] " +
                     "are not available for Room with id[" + rentRoomDto.getRoomId() + "]");
         }
 
