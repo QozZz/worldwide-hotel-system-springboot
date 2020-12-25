@@ -39,15 +39,6 @@ public class ScheduleService {
     public ScheduleDto createSchedule(RentRoomDto rentRoomDto, String email) {
         validateRentDates(rentRoomDto);
 
-        if (scheduleRepository.existsByRoomIdAndRentStartLessThanEqualAndRentEndGreaterThanEqual(
-                rentRoomDto.getRoomId(),
-                rentRoomDto.getRentEnd(),
-                rentRoomDto.getRentStart())) {
-            throw new EntityAlreadyExistsException("Dates " +
-                    "[" + rentRoomDto.getRentStart() + " -- " + rentRoomDto.getRentEnd() + "] " +
-                    "are not available for Room with id[" + rentRoomDto.getRoomId() + "]");
-        }
-
         User user = userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User with Name [" + email + "] doesn't exist"));
 
@@ -69,15 +60,24 @@ public class ScheduleService {
         LocalDate currentDate = LocalDate.now();
 
         if (rentRoomDto.getRentStart() == null || rentRoomDto.getRentEnd() == null) {
-            throw new RentException("Dates are empty");
+            throw new RentException("Empty dates");
         }
 
         if ((rentRoomDto.getRentStart().isBefore(currentDate) || rentRoomDto.getRentEnd().isBefore(currentDate))) {
-            throw new RentException("Dates should not be earlier than today");
+            throw new RentException("Date can't be less than [" + LocalDate.now() + "]");
         }
 
         if ((rentRoomDto.getRentEnd().isBefore(rentRoomDto.getRentStart()))) {
-            throw new RentException("Date [End] should not be earlier than [Start]");
+            throw new RentException("Start date can't be less than End date");
+        }
+
+        if (scheduleRepository.existsByRoomIdAndRentStartLessThanEqualAndRentEndGreaterThanEqual(
+                rentRoomDto.getRoomId(),
+                rentRoomDto.getRentEnd(),
+                rentRoomDto.getRentStart())) {
+            throw new EntityAlreadyExistsException("Dates " +
+                    "[" + rentRoomDto.getRentStart() + " -- " + rentRoomDto.getRentEnd() + "] " +
+                    "are not available for Room with id[" + rentRoomDto.getRoomId() + "]");
         }
     }
 }
