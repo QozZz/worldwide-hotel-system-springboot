@@ -57,7 +57,6 @@ public class ScheduleService {
     }
 
     private void validateRentDates(RentRoomDto rentRoomDto) {
-        System.out.println();
         LocalDate currentDate = LocalDate.now();
 
         if (rentRoomDto.getRentStart() == null || rentRoomDto.getRentEnd() == null) {
