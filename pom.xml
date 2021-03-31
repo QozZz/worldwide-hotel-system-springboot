@@ -21,7 +21,7 @@
         <jjwt-version>0.9.1</jjwt-version>
         <lombok-version>1.18.12</lombok-version>
         <mapstruct-version>1.3.1.Final</mapstruct-version>
-        <google.guava-version>28.2-jre</google.guava-version>
+        <google.guava-version>29.0-jre</google.guava-version>
         <commons-io-verions>2.6</commons-io-verions>
         <springfox-version>2.9.2</springfox-version>
     </properties>
